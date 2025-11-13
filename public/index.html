@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <link rel="icon" type="image/x-icon" href="https://openlayers.org/favicon.ico" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <!-- OpenLayers desde CDN -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/ol@latest/ol.css">
+    <script src="https://cdn.jsdelivr.net/npm/ol@latest/dist/ol.js"></script>
+    <title>Visualizador GIS</title>
+    <style>
+        /* comentario en CSS */
+
+        /* selector CSS #map: selecciona cualquier elemento con id="map" */
+        #map {
+            height: 500px;
+            /* alto del elemento = 500px */
+            width: 100%;
+            /* ancho del elemento = 100% de su elemento contenedor */
+            border: 1px solid;
+            /* borde 1px */
+        }
+    </style>
+  </head>
+  <body>
+    <div id="map"></div>
+    <script type="module" src="main.js"></script>
+    <script type="module" src="gsconfig.js"></script>
+  </body>
+</html>

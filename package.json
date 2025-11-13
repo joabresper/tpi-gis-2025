@@ -1,0 +1,17 @@
+{
+  "name": "tpi-gis",
+  "version": "1.0.0",
+  "scripts": {
+    "start": "node backend/server.js",
+    "build": "vite build",
+    "serve": "vite preview"
+  },
+  "devDependencies": {
+    "vite": "^7.1.11"
+  },
+  "dependencies": {
+    "expres": "^0.0.5",
+    "express": "^5.1.0",
+    "ol": "latest"
+  }
+}
