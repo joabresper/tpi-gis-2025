@@ -117,3 +117,25 @@ body {
   background: #555;
 }
 
+/* ======= TOOLTIP DE MEDICIÓN ======= */
+.ol-tooltip {
+  position: relative;
+  background: rgba(0, 0, 0, 0.7);
+  color: white;
+  padding: 4px 8px;
+  border-radius: 4px;
+  font-size: 12px;
+  white-space: nowrap;
+  pointer-events: none;
+}
+
+.ol-tooltip-measure {
+  opacity: 1;
+  font-weight: bold;
+}
+
+.ol-tooltip-static {
+  background-color: rgba(0, 0, 0, 0.8);
+  border: 1px solid white;
+}
+
