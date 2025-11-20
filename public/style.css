@@ -27,7 +27,7 @@ body {
 
 /* ======= PANEL LATERAL ======= */
 .sidebar {
-  width: 260px;
+  width: 280px;
   background-color: #f8f9fa;
   border-right: 1px solid #ddd;
   padding: 1rem;
@@ -52,7 +52,7 @@ body {
   list-style: none;
   padding: 0;
   margin: 0;
-  max-height: 250px;      /* Ajustá según tu diseño */
+  max-height: 410px;      /* Ajustá según tu diseño */
   overflow-y: auto;
   padding-right: 6px;     /* evita que el scroll tape texto */
 }
