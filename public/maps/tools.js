@@ -1,6 +1,10 @@
 import { base_map } from './maps.js';
+import gs from '../gsconfig.js';
 
-// Capa vectorial para dibujar la línea de medición
+// =========================
+// CAPA Y LÓGICA DE MEDICIÓN
+// =========================
+
 const measureLayer = new ol.layer.Vector({
   source: new ol.source.Vector(),
   style: new ol.style.Style({
@@ -23,153 +27,360 @@ const measureLayer = new ol.layer.Vector({
 
 base_map.addLayer(measureLayer);
 
-// Variables para la interacción de medición
 let measureInteraction = null;
 let measureTooltip = null;
 let measureOverlay = null;
 let measureListener = null;
 
-// Función para limpiar la medición anterior
 function limpiarMedicion() {
   if (measureInteraction) {
     base_map.removeInteraction(measureInteraction);
     measureInteraction = null;
   }
-  
   if (measureOverlay) {
     base_map.removeOverlay(measureOverlay);
     measureOverlay = null;
   }
-  
-  // Limpiar el listener de geometría si existe
   if (measureListener) {
     ol.Observable.unByKey(measureListener);
     measureListener = null;
   }
-  
   measureTooltip = null;
   measureLayer.getSource().clear();
 }
 
-// Función para activar la herramienta de medir distancia
 export function activarMedirDistancia() {
-  // Limpiar cualquier medición anterior
   limpiarMedicion();
-  
-  // Crear la interacción de dibujo para líneas
+
   measureInteraction = new ol.interaction.Draw({
     source: measureLayer.getSource(),
     type: 'LineString'
   });
-  
-  // Crear overlay para mostrar la medida
+
   measureOverlay = new ol.Overlay({
     element: document.createElement('div'),
     positioning: 'bottom-center',
     stopEvent: false,
     offset: [0, -10]
   });
-  
+
   base_map.addOverlay(measureOverlay);
-  
+
   let sketch;
-  
-  // Función para actualizar la medida en el tooltip
+
   function actualizarMedida(geometry) {
     if (!measureTooltip || !geometry) return;
-    
+
     const length = ol.sphere.getLength(geometry, { projection: 'EPSG:4326' });
-    const output = length > 1000 
+    const output = length > 1000
       ? (length / 1000).toFixed(2) + ' km'
       : length.toFixed(2) + ' m';
-    
+
     measureTooltip.innerHTML = output;
-    
-    // Actualizar la posición del tooltip al último punto de la línea
+
     const coordinates = geometry.getCoordinates();
     if (coordinates.length > 0) {
       const lastPoint = coordinates[coordinates.length - 1];
       measureOverlay.setPosition(lastPoint);
     }
   }
-  
-  // Cuando comienza el dibujo
-  measureInteraction.on('drawstart', function(e) {
+
+  measureInteraction.on('drawstart', e => {
     sketch = e.feature;
     measureTooltip = document.createElement('div');
     measureTooltip.className = 'ol-tooltip ol-tooltip-measure';
     measureOverlay.setElement(measureTooltip);
-    
-    // Escuchar cambios en la geometría para actualizar en tiempo real
+
     const geometry = sketch.getGeometry();
-    measureListener = geometry.on('change', function() {
+    measureListener = geometry.on('change', () => {
       actualizarMedida(geometry);
     });
   });
-  
-  // Cuando termina el dibujo
-  measureInteraction.on('drawend', function(e) {
+
+  measureInteraction.on('drawend', e => {
     const geometry = e.feature.getGeometry();
-    
+
     if (measureTooltip) {
       measureTooltip.className = 'ol-tooltip ol-tooltip-static';
       actualizarMedida(geometry);
       measureOverlay.setOffset([0, -7]);
     }
-    
-    // Remover el listener
+
     if (measureListener) {
       ol.Observable.unByKey(measureListener);
       measureListener = null;
     }
-    
+
     sketch = null;
   });
-  
-  // Si se cancela el dibujo
-  measureInteraction.on('drawabort', function() {
-    measureOverlay.setElement(null);
+
+  measureInteraction.on('drawabort', () => {
+    if (measureOverlay) {
+      measureOverlay.setElement(null);
+    }
     measureTooltip = null;
-    
-    // Remover el listener si existe
+
     if (measureListener) {
       ol.Observable.unByKey(measureListener);
       measureListener = null;
     }
-    
+
     sketch = null;
   });
-  
-  // Agregar la interacción al mapa
+
   base_map.addInteraction(measureInteraction);
 }
 
-// Función para inicializar el listener del botón
-export function inicializarHerramientas() {
-  const toolSelect = document.getElementById('tool-select');
-  const applyButton = document.getElementById('apply-tool');
-  
-  if (!toolSelect || !applyButton) {
-    console.error('Elementos de herramientas no encontrados');
-    return;
+// ============================
+// CONSULTA GRÁFICA (PUNTO/BOX)
+// ============================
+
+let infoOverlay = null;
+let infoElement = null;
+let identifyClickKey = null;
+let dragBoxInteraction = null;
+
+function crearInfoOverlay() {
+  if (!infoElement) {
+    infoElement = document.createElement('div');
+    infoElement.className = 'info-popup';
   }
-  
-  applyButton.addEventListener('click', function() {
-    const selectedTool = toolSelect.value;
-    
-    if (selectedTool === 'measure') {
-      activarMedirDistancia();
-    } else {
-      // Si se selecciona otra herramienta, limpiar la medición
-      limpiarMedicion();
+  if (!infoOverlay) {
+    infoOverlay = new ol.Overlay({
+      element: infoElement,
+      offset: [0, -15],
+      positioning: 'bottom-center',
+      stopEvent: true
+    });
+    base_map.addOverlay(infoOverlay);
+  }
+}
+
+function limpiarConsulta() {
+  if (identifyClickKey) {
+    ol.Observable.unByKey(identifyClickKey);
+    identifyClickKey = null;
+  }
+  if (dragBoxInteraction) {
+    base_map.removeInteraction(dragBoxInteraction);
+    dragBoxInteraction = null;
+  }
+  if (infoOverlay) {
+    base_map.removeOverlay(infoOverlay);
+    infoOverlay = null;
+    infoElement = null;
+  }
+}
+
+function obtenerCapasWMSVisibles() {
+  const visibles = [];
+  base_map.getLayers().forEach(layer => {
+    if (layer instanceof ol.layer.Tile && layer.getVisible && layer.getVisible()) {
+      const source = layer.getSource();
+      if (source instanceof ol.source.TileWMS) {
+        visibles.push(layer);
+      }
     }
   });
-  
-  // También limpiar cuando se cambia la selección del dropdown
-  toolSelect.addEventListener('change', function() {
-    if (toolSelect.value !== 'measure') {
-      limpiarMedicion();
-    }
+  return visibles;
+}
+
+function mostrarResultadoPopup(features, coordinate) {
+  if (!features || features.length === 0) return;
+
+  crearInfoOverlay();
+
+  const props = features[0].properties || features[0];
+  const contenido = Object.entries(props)
+    .map(([k, v]) => `<strong>${k}</strong>: ${v}`)
+    .join('<br>');
+
+  infoElement.innerHTML = contenido || 'Sin atributos';
+  infoOverlay.setPosition(coordinate);
+}
+
+export function activarConsultaPunto() {
+  limpiarConsulta();
+
+  identifyClickKey = base_map.on('singleclick', evt => {
+    const coordinate = evt.coordinate;
+    const view = base_map.getView();
+    const resolution = view.getResolution();
+    const projection = view.getProjection();
+
+    const capasVisibles = obtenerCapasWMSVisibles();
+    if (capasVisibles.length === 0) return;
+
+    const layer = capasVisibles[0];
+    const source = layer.getSource();
+    const params = source.getParams();
+
+    const infoUrl = source.getFeatureInfoUrl(
+      coordinate,
+      resolution,
+      projection,
+      {
+        INFO_FORMAT: 'application/json',
+        QUERY_LAYERS: params.LAYERS,
+        FEATURE_COUNT: 10
+      }
+    );
+
+    if (!infoUrl) return;
+
+    fetch(infoUrl)
+      .then(r => r.json())
+      .then(json => {
+        const features = json.features || [];
+        mostrarResultadoPopup(features, coordinate);
+      })
+      .catch(err => console.error('Error en GetFeatureInfo:', err));
+  });
+}
+/*Luego modifico esto las consultas no funcionan todavia*/ 
+export function activarConsultaRectangulo() {
+  limpiarConsulta();
+
+  const wfsUrl = gs.wfsUrl || gs.url.replace('/wms', '/wfs');
+
+  dragBoxInteraction = new ol.interaction.DragBox();
+  base_map.addInteraction(dragBoxInteraction);
+
+  dragBoxInteraction.on('boxend', () => {
+    const extent = dragBoxInteraction.getGeometry().getExtent();
+    const capasVisibles = obtenerCapasWMSVisibles();
+    if (capasVisibles.length === 0) return;
+
+    const layer = capasVisibles[0];
+    const source = layer.getSource();
+    const params = source.getParams();
+    const typeName = params.LAYERS;
+
+    const srs = 'EPSG:4326';
+    const bboxParam = extent.join(',') + ',' + srs;
+
+    const url = `${wfsUrl}?service=WFS&version=1.1.0&request=GetFeature` +
+      `&typeName=${encodeURIComponent(typeName)}` +
+      `&outputFormat=application/json` +
+      `&srsName=${encodeURIComponent(srs)}` +
+      `&bbox=${encodeURIComponent(bboxParam)}`;
+
+    const center = ol.extent.getCenter(extent);
+
+    fetch(url)
+      .then(r => r.json())
+      .then(json => {
+        const features = json.features || [];
+        mostrarResultadoPopup(features, center);
+      })
+      .catch(err => console.error('Error en consulta por rectángulo (WFS):', err));
   });
 }
 
+// ===============================
+// ALTA DE NUEVOS ELEMENTOS
+// ===============================
+
+const editLayer = new ol.layer.Vector({
+  source: new ol.source.Vector(),
+  style: new ol.style.Style({
+    image: new ol.style.Circle({
+      radius: 6,
+      fill: new ol.style.Fill({ color: 'rgba(0, 153, 255, 0.6)' }),
+      stroke: new ol.style.Stroke({ color: '#003366', width: 2 })
+    }),
+    stroke: new ol.style.Stroke({
+      color: 'rgba(0, 153, 255, 0.8)',
+      width: 2
+    }),
+    fill: new ol.style.Fill({
+      color: 'rgba(0, 153, 255, 0.2)'
+    })
+  })
+});
+
+base_map.addLayer(editLayer);
+
+let editDrawInteraction = null;
+
+function limpiarEdicion() {
+  if (editDrawInteraction) {
+    base_map.removeInteraction(editDrawInteraction);
+    editDrawInteraction = null;
+  }
+}
+
+export function activarAgregarElemento() {
+  limpiarEdicion();
+
+  editDrawInteraction = new ol.interaction.Draw({
+    source: editLayer.getSource(),
+    type: 'Point'
+  });
+
+  editDrawInteraction.on('drawend', evt => {
+    const feature = evt.feature;
+    const nombre = window.prompt('Ingrese el nombre del elemento:', '');
+    if (nombre) {
+      feature.set('nombre', nombre);
+    }
+    console.log('Nuevo feature agregado:', feature.getGeometry().getCoordinates(), feature.getProperties());
+  });
+
+  base_map.addInteraction(editDrawInteraction);
+}
+
+// ===============================
+// CONTROLES DE BOTONES EN EL MAPA
+// ===============================
+
+function desactivarTodasLasHerramientas() {
+  limpiarMedicion();
+  limpiarConsulta();
+  limpiarEdicion();
+}
+
+export function inicializarHerramientas() {
+  // contenedor de controles
+  const container = document.createElement('div');
+  container.className = 'ol-control ol-custom-tools';
+
+  function crearBoton(texto, titulo, onClick) {
+    const button = document.createElement('button');
+    button.type = 'button';
+    button.innerHTML = texto;
+    button.title = titulo;
+    button.className = 'ol-custom-tool-btn';
+
+    button.addEventListener('click', () => {
+      const yaActivo = button.classList.contains('active-tool');
+
+      // desactivo todo
+      desactivarTodasLasHerramientas();
+      document
+        .querySelectorAll('.ol-custom-tool-btn.active-tool')
+        .forEach(b => b.classList.remove('active-tool'));
+
+      // si ya estaba activo, lo apago; si no, lo activo
+      if (!yaActivo) {
+        button.classList.add('active-tool');
+        onClick();
+      }
+    });
+
+    return button;
+  }
+
+  const btnMeasure = crearBoton('📏', 'Medir distancia', activarMedirDistancia);
+  const btnPoint = crearBoton('📍', 'Consulta por punto', activarConsultaPunto);
+  const btnRect = crearBoton('▭', 'Consulta por rectángulo', activarConsultaRectangulo);
+  const btnAdd = crearBoton('+', 'Agregar elemento', activarAgregarElemento);
+
+  container.appendChild(btnMeasure);
+  container.appendChild(btnPoint);
+  container.appendChild(btnRect);
+  container.appendChild(btnAdd);
+
+  const control = new ol.control.Control({ element: container });
+  base_map.addControl(control);
+}
