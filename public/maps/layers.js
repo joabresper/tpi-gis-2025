@@ -17,7 +17,7 @@ export const capas = {
     visible: false,
     source: new ol.source.TileWMS({
       url: gs.url,
-      params: { 'LAYERS': `${gs.workspace}:Actividades_Agropecuarias` }
+      params: { 'LAYERS': `${gs.workspace}:actividades_agropecuarias` }
     })
   }),
 
@@ -26,7 +26,7 @@ export const capas = {
     visible: false,
     source: new ol.source.TileWMS({
       url: gs.url,
-      params: { 'LAYERS': `${gs.workspace}:Actividades_Economicas` }
+      params: { 'LAYERS': `${gs.workspace}:actividades_economicas` }
     })
   }),
 
@@ -35,7 +35,7 @@ export const capas = {
     visible: false,
     source: new ol.source.TileWMS({
       url: gs.url,
-      params: { 'LAYERS': `${gs.workspace}:Complejo_de_Energia_Ene` }
+      params: { 'LAYERS': `${gs.workspace}:complejo_de_energia_ene` }
     })
   }),
 
@@ -44,7 +44,7 @@ export const capas = {
     visible: false,
     source: new ol.source.TileWMS({
       url: gs.url,
-      params: { 'LAYERS': `${gs.workspace}:Curso_de_Agua_Hid` }
+      params: { 'LAYERS': `${gs.workspace}:curso_de_agua_hid` }
     })
   }),
 
@@ -53,7 +53,7 @@ export const capas = {
     visible: false,
     source: new ol.source.TileWMS({
       url: gs.url,
-      params: { 'LAYERS': `${gs.workspace}:Curvas_de_Nivel` }
+      params: { 'LAYERS': `${gs.workspace}:curvas_de_nivel` }
     })
   }),
 
@@ -62,7 +62,7 @@ export const capas = {
     visible: false,
     source: new ol.source.TileWMS({
       url: gs.url,
-      params: { 'LAYERS': `${gs.workspace}:Edif_Construcciones_Turisticas` }
+      params: { 'LAYERS': `${gs.workspace}:edif_construcciones_turisticas` }
     })
   }),
 
@@ -71,7 +71,7 @@ export const capas = {
     visible: false,
     source: new ol.source.TileWMS({
       url: gs.url,
-      params: { 'LAYERS': `${gs.workspace}:Edif_Depor_y_Esparcimiento` }
+      params: { 'LAYERS': `${gs.workspace}:edif_depor_y_esparcimiento` }
     })
   }),
 
@@ -80,7 +80,7 @@ export const capas = {
     visible: false,
     source: new ol.source.TileWMS({
       url: gs.url,
-      params: { 'LAYERS': `${gs.workspace}:Edif_Educacion` }
+      params: { 'LAYERS': `${gs.workspace}:edif_educacion` }
     })
   }),
 
@@ -89,7 +89,7 @@ export const capas = {
     visible: false,
     source: new ol.source.TileWMS({
       url: gs.url,
-      params: { 'LAYERS': `${gs.workspace}:Edificio_Publico_IPS` }
+      params: { 'LAYERS': `${gs.workspace}:edificio_publico_ips` }
     })
   }),
 
@@ -98,7 +98,7 @@ export const capas = {
     visible: false,
     source: new ol.source.TileWMS({
       url: gs.url,
-      params: { 'LAYERS': `${gs.workspace}:Edificio_de_Salud_IPS` }
+      params: { 'LAYERS': `${gs.workspace}:edificio_de_salud_ips` }
     })
   }),
 
@@ -107,7 +107,7 @@ export const capas = {
     visible: false,
     source: new ol.source.TileWMS({
       url: gs.url,
-      params: { 'LAYERS': `${gs.workspace}:Edificio_de_Seguridad_IPS` }
+      params: { 'LAYERS': `${gs.workspace}:edificio_de_seguridad_ips` }
     })
   }),
 
@@ -116,7 +116,7 @@ export const capas = {
     visible: false,
     source: new ol.source.TileWMS({
       url: gs.url,
-      params: { 'LAYERS': `${gs.workspace}:Edificios_Religiosos` }
+          params: { 'LAYERS': `${gs.workspace}:edif_religiosos` }
     })
   }),
 
@@ -125,7 +125,7 @@ export const capas = {
     visible: false,
     source: new ol.source.TileWMS({
       url: gs.url,
-      params: { 'LAYERS': `${gs.workspace}:Edificios_Ferroviarios` }
+      params: { 'LAYERS': `${gs.workspace}:edificios_ferroviarios` }
     })
   }),
 
@@ -134,7 +134,7 @@ export const capas = {
     visible: false,
     source: new ol.source.TileWMS({
       url: gs.url,
-      params: { 'LAYERS': `${gs.workspace}:Ejido` }
+      params: { 'LAYERS': `${gs.workspace}:ejido` }
     })
   }),
 
@@ -143,7 +143,7 @@ export const capas = {
     visible: false,
     source: new ol.source.TileWMS({
       url: gs.url,
-      params: { 'LAYERS': `${gs.workspace}:Espejo_de_Agua_Hid` }
+      params: { 'LAYERS': `${gs.workspace}:espejo_de_agua_hid` }
     })
   }),
 
@@ -152,7 +152,7 @@ export const capas = {
     visible: false,
     source: new ol.source.TileWMS({
       url: gs.url,
-      params: { 'LAYERS': `${gs.workspace}:Estructuras_portuarias` }
+      params: { 'LAYERS': `${gs.workspace}:estructuras_portuarias` }
     })
   }),
 
@@ -161,7 +161,7 @@ export const capas = {
     visible: false,
     source: new ol.source.TileWMS({
       url: gs.url,
-      params: { 'LAYERS': `${gs.workspace}:Infraestructura_Aeroportuaria_Punto` }
+      params: { 'LAYERS': `${gs.workspace}:infraestructura_aeroportuaria_punto` }
     })
   }),
 
@@ -170,7 +170,7 @@ export const capas = {
     visible: false,
     source: new ol.source.TileWMS({
       url: gs.url,
-      params: { 'LAYERS': `${gs.workspace}:Infraestructura_Hidro` }
+      params: { 'LAYERS': `${gs.workspace}:infraestructura_hidro` }
     })
   }),
 
@@ -179,7 +179,7 @@ export const capas = {
     visible: false,
     source: new ol.source.TileWMS({
       url: gs.url,
-      params: { 'LAYERS': `${gs.workspace}:Isla` }
+      params: { 'LAYERS': `${gs.workspace}:isla` }
     })
   }),
 
@@ -188,7 +188,7 @@ export const capas = {
     visible: false,
     source: new ol.source.TileWMS({
       url: gs.url,
-      params: { 'LAYERS': `${gs.workspace}:Limite_Politico_Administrativo_Lim` }
+      params: { 'LAYERS': `${gs.workspace}:limite_politico_administrativo_lim` }
     })
   }),
 
@@ -197,7 +197,7 @@ export const capas = {
     visible: false,
     source: new ol.source.TileWMS({
       url: gs.url,
-      params: { 'LAYERS': `${gs.workspace}:Localidades` }
+      params: { 'LAYERS': `${gs.workspace}:localidades` }
     })
   }),
 
@@ -206,7 +206,7 @@ export const capas = {
     visible: false,
     source: new ol.source.TileWMS({
       url: gs.url,
-      params: { 'LAYERS': `${gs.workspace}:Lineas_de_Conduccion_Ene` }
+      params: { 'LAYERS': `${gs.workspace}:lineas_de_conduccion_ene` }
     })
   }),
 
@@ -215,7 +215,7 @@ export const capas = {
     visible: false,
     source: new ol.source.TileWMS({
       url: gs.url,
-      params: { 'LAYERS': `${gs.workspace}:Marcas_y_Senales` }
+      params: { 'LAYERS': `${gs.workspace}:marcas_y_senales` }
     })
   }),
 
@@ -224,7 +224,7 @@ export const capas = {
     visible: false,
     source: new ol.source.TileWMS({
       url: gs.url,
-      params: { 'LAYERS': `${gs.workspace}:Muro_Embalse` }
+      params: { 'LAYERS': `${gs.workspace}:muro_embalse` }
     })
   }),
 
@@ -233,7 +233,7 @@ export const capas = {
     visible: false,
     source: new ol.source.TileWMS({
       url: gs.url,
-      params: { 'LAYERS': `${gs.workspace}:Obra_Portuaria` }
+      params: { 'LAYERS': `${gs.workspace}:obra_portuaria` }
     })
   })
 };
