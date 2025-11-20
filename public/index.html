@@ -10,15 +10,10 @@
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/ol@latest/ol.css">
     <script src="https://cdn.jsdelivr.net/npm/ol@latest/dist/ol.js"></script>
 
-    <!-- Estilos -->
+    <!-- Estilos propios -->
     <link rel="stylesheet" href="./style.css" />
-    <link
-      rel="stylesheet"
-      href="https://cdn.jsdelivr.net/npm/ol@latest/ol.css"
-    />
-    <link rel="stylesheet" href="./style.css" />
-
   </head>
+
   <body>
     <header class="header">
       <h1>Visualizador GIS</h1>
@@ -29,7 +24,8 @@
       <aside class="sidebar">
         <section class="layers-panel">
           <h2>Capas</h2>
-          <ul>
+          <ul id="layers-list">
+            <!-- Las capas se cargan desde main.js -->
           </ul>
         </section>
       </aside>
@@ -39,10 +35,6 @@
         <div id="map"></div>
       </section>
     </main>
-
-    <!-- <footer class="footer">
-      <p>© 2025 Visualizador GIS — Desarrollado con OpenLayers</p>
-    </footer> -->
 
     <!-- Scripts principales -->
     <script type="module" src="./main.js"></script>

@@ -32,34 +32,100 @@ body {
   border-right: 1px solid #ddd;
   padding: 1rem;
   box-sizing: border-box;
+
   display: flex;
   flex-direction: column;
   gap: 1.5rem;
 }
 
+/* Título del panel */
 .sidebar h2 {
-  font-size: 1.1rem;
-  color: #333;
-  margin-bottom: 0.5rem;
-  width: 260px;          
-  padding: 15px;
-  display: flex;
-  flex-direction: column;
-  gap: 20px;
+  font-size: 1.15rem;
+  color: #222;
+  margin: 0 0 0.5rem 0;
+  padding: 0;
+  font-weight: 600;
 }
 
+/* ======= PANEL DE CAPAS ======= */
+.layers-panel {
+  flex: 1 1 auto;              
+  min-height: 0;               
+  display: flex;
+  flex-direction: column;
+  background-color: #ffffff;
+  border: 1px solid #e3e3e3;
+  border-radius: 8px;
+  padding: 0.75rem;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.08);
+}
+
+
+/* Título de Capas */
+.layers-panel h2 {
+  font-size: 1rem;
+  font-weight: 600;
+  color: #333;
+  margin: 0 0 0.6rem 0;
+}
+
+/* Lista scrollable */
 .layers-panel ul {
   list-style: none;
   padding: 0;
   margin: 0;
-  max-height: 410px;      /* Ajustá según tu diseño */
+  flex: 1;
   overflow-y: auto;
-  padding-right: 6px;     /* evita que el scroll tape texto */
 }
 
+/* Cada ítem de capa */
 .layers-panel li {
-  margin-bottom: 0.5rem;
+  padding: 2px 0;
 }
+
+/* Caja que contiene checkbox + texto */
+.layers-panel li label {
+  display: flex;
+  align-items: center;
+  gap: 0.45rem;
+
+  font-size: 0.92rem;
+  color: #222;
+
+  padding: 6px;
+  border-radius: 6px;
+
+  cursor: pointer;
+  user-select: none;
+  transition: background-color 0.15s ease;
+}
+
+.layers-panel li label:hover {
+  background-color: #eef3ff;
+}
+
+/* Checkbox moderno */
+.layers-panel li input[type="checkbox"] {
+  width: 16px;
+  height: 16px;
+  margin: 0;
+  accent-color: #1976d2;    /* Azul profesional */
+}
+
+/* Scrollbar estilizado */
+.layers-panel ul::-webkit-scrollbar {
+  width: 6px;
+}
+
+.layers-panel ul::-webkit-scrollbar-thumb {
+  background-color: #bdbdbd;
+  border-radius: 4px;
+}
+
+.layers-panel ul::-webkit-scrollbar-thumb:hover {
+  background-color: #999;
+}
+
 
 /* ======= ÁREA DEL MAPA ======= */
 .map-area {
