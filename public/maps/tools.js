@@ -107,11 +107,6 @@ export function activarMedirDistancia() {
       // Detectar si se agregó un nuevo vértice
       if (coords.length > count) {
         if (count > 0) {
-          // El último punto agregado es el penúltimo en el array (el último es el cursor)
-          // Pero en 'change' el cursor mueve el último punto.
-          // Cuando se hace click, se fija un punto.
-          // OpenLayers Draw interaction: coordinates length increases when a point is added.
-
           const index = coords.length - 2;
           if (index >= 0) {
             const point = coords[index];
@@ -473,7 +468,9 @@ export function inicializarHerramientas() {
   const container = document.createElement('div');
   container.className = 'ol-control ol-custom-tools';
 
-  function crearBoton(texto, titulo, onClick) {
+  let btnTrash = null;
+
+  function crearBoton(texto, titulo, onClick, esAccion = false, mostrarBasura = false) {
     const button = document.createElement('button');
     button.type = 'button';
     button.innerHTML = texto;
@@ -481,6 +478,11 @@ export function inicializarHerramientas() {
     button.className = 'ol-custom-tool-btn';
 
     button.addEventListener('click', () => {
+      if (esAccion) {
+        onClick();
+        return; // No activamos la clase active-tool
+      }
+
       const yaActivo = button.classList.contains('active-tool');
 
       // desactivo todo
@@ -493,14 +495,42 @@ export function inicializarHerramientas() {
       if (!yaActivo) {
         button.classList.add('active-tool');
         onClick();
+
+        // Mostrar basura si la herramienta lo requiere
+        if (btnTrash && mostrarBasura) {
+          btnTrash.style.display = 'flex';
+          // Posicionar al lado del botón activo
+          // offsetTop nos da la posición relativa al contenedor padre (que tiene position: absolute)
+          btnTrash.style.top = button.offsetTop + 'px';
+        } else if (btnTrash) {
+          btnTrash.style.display = 'none';
+        }
+      } else {
+        // Si se desactiva, ocultar basura
+        if (btnTrash) {
+          btnTrash.style.display = 'none';
+        }
       }
     });
 
     return button;
   }
 
-  const btnMeasure = crearBoton('📏', 'Medir distancia', activarMedirDistancia);
-  const btnMeasureArea = crearBoton('📐', 'Medir área', activarMedirArea);
+  // Botón de basura (lo creamos antes para poder referenciarlo, pero lo añadimos al final)
+  btnTrash = crearBoton('🗑️', 'Borrar mediciones', () => {
+    limpiarMedicion();
+    // También limpiamos la capa de edición si se desea borrar todo
+    // editLayer.getSource().clear(); 
+  }, true);
+  btnTrash.classList.add('btn-trash');
+  // Aseguramos que empiece oculto
+  btnTrash.style.display = 'none';
+
+  // Herramientas de medición (mostrarBasura = true)
+  const btnMeasure = crearBoton('📏', 'Medir distancia', activarMedirDistancia, false, true);
+  const btnMeasureArea = crearBoton('📐', 'Medir área', activarMedirArea, false, true);
+
+  // Otras herramientas (mostrarBasura = false)
   const btnPoint = crearBoton('📍', 'Consulta por punto', activarConsultaPunto);
   const btnRect = crearBoton('▭', 'Consulta por rectángulo', activarConsultaRectangulo);
   const btnAdd = crearBoton('+', 'Agregar elemento', activarAgregarElemento);
@@ -510,6 +540,7 @@ export function inicializarHerramientas() {
   container.appendChild(btnPoint);
   container.appendChild(btnRect);
   container.appendChild(btnAdd);
+  container.appendChild(btnTrash);
 
   const control = new ol.control.Control({ element: container });
   base_map.addControl(control);
