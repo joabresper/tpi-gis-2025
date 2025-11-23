@@ -516,6 +516,13 @@ export function inicializarHerramientas() {
     return button;
   }
 
+  function toggleSidebar() {
+    const sidebar = document.querySelector('.sidebar');
+    if (sidebar) {
+      sidebar.classList.toggle('is-open');
+    }
+  }
+
   // Botón de basura (lo creamos antes para poder referenciarlo, pero lo añadimos al final)
   btnTrash = crearBoton('🗑️', 'Borrar mediciones', () => {
     limpiarMedicion();
@@ -526,6 +533,9 @@ export function inicializarHerramientas() {
   // Aseguramos que empiece oculto
   btnTrash.style.display = 'none';
 
+  //Burguer menu
+  const btnBurger = crearBoton('☰', 'Mostrar/Ocultar capas', toggleSidebar, true, false);
+
   // Herramientas de medición (mostrarBasura = true)
   const btnMeasure = crearBoton('📏', 'Medir distancia', activarMedirDistancia, false, true);
   const btnMeasureArea = crearBoton('📐', 'Medir área', activarMedirArea, false, true);
@@ -535,6 +545,7 @@ export function inicializarHerramientas() {
   const btnRect = crearBoton('▭', 'Consulta por rectángulo', activarConsultaRectangulo);
   const btnAdd = crearBoton('+', 'Agregar elemento', activarAgregarElemento);
 
+  container.appendChild(btnBurger);
   container.appendChild(btnMeasure);
   container.appendChild(btnMeasureArea);
   container.appendChild(btnPoint);

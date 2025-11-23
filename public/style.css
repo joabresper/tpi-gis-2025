@@ -25,17 +25,31 @@ body {
   overflow: hidden;
 }
 
-/* ======= PANEL LATERAL ======= */
+/* ======= PANEL LATERAL (SIDEBAR) ======= */
 .sidebar {
-  width: 280px;
+  width: 0;
+  /* Por defecto cerrado o controlado por JS */
   background-color: #f8f9fa;
   border-right: 1px solid #ddd;
-  padding: 1rem;
   box-sizing: border-box;
 
+  /* Flex item properties */
+  flex-shrink: 0;
   display: flex;
   flex-direction: column;
-  gap: 1.5rem;
+
+  /* Animación de ancho */
+  transition: width 0.3s ease;
+  overflow: hidden;
+  white-space: nowrap;
+  /* Evita que el texto se rompa al cerrar */
+}
+
+.sidebar.is-open {
+  width: 280px;
+  padding: 1rem;
+  /* Padding solo cuando está abierto para evitar saltos */
+  border-right: 1px solid #ddd;
 }
 
 /* Título del panel */
@@ -45,6 +59,16 @@ body {
   margin: 0 0 0.5rem 0;
   padding: 0;
   font-weight: 600;
+}
+
+/* En dispositivos chicos, comportamiento overlay */
+@media (max-width: 768px) {
+  .sidebar {
+    position: absolute;
+    height: 100%;
+    z-index: 2000;
+    box-shadow: 2px 0 5px rgba(0, 0, 0, 0.2);
+  }
 }
 
 /* ======= PANEL DE CAPAS ======= */
@@ -58,8 +82,15 @@ body {
   border-radius: 8px;
   padding: 0.75rem;
   box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
+  min-width: 240px;
+  /* Asegura ancho mínimo para el contenido */
+  opacity: 0;
+  transition: opacity 0.2s ease;
 }
 
+.sidebar.is-open .layers-panel {
+  opacity: 1;
+}
 
 /* Título de Capas */
 .layers-panel h2 {
@@ -149,19 +180,6 @@ body {
   border-top: 1px solid #ccc;
 }
 
-.layers-panel ul::-webkit-scrollbar {
-  width: 6px;
-}
-
-.layers-panel ul::-webkit-scrollbar-thumb {
-  background: #888;
-  border-radius: 4px;
-}
-
-.layers-panel ul::-webkit-scrollbar-thumb:hover {
-  background: #555;
-}
-
 /* ======= CONTROL DE HERRAMIENTAS ======= */
 
 .ol-custom-tools {
@@ -175,7 +193,8 @@ body {
   display: flex;
   flex-direction: column;
   gap: 8px;
-  z-index: 1000;
+  z-index: 1001;
+  /* Mayor que el sidebar para que no se oculte */
 }
 
 .ol-custom-tool-btn {
@@ -187,6 +206,53 @@ body {
   cursor: pointer;
   font-size: 20px;
   display: flex;
+  align-items: center;
+  justify-content: center;
+  user-select: none;
+  transition: background-color 0.2s;
+}
+
+.ol-custom-tool-btn:hover {
+  background-color: #f0f0f0;
+}
+
+.ol-custom-tool-btn.active-tool {
+  background-color: #e0e7ff;
+  color: #3b82f6;
+  border-color: #3b82f6;
+}
+
+.ol-custom-tool-btn.btn-trash {
+  position: absolute;
+  left: 100%;
+  margin-left: 10px;
+  background-color: #fee2e2;
+  /* Light red */
+  color: #b91c1c;
+  border-color: #fca5a5;
+  display: none;
+  /* Hidden by default */
+  z-index: 1001;
+}
+
+.ol-custom-tool-btn.btn-trash:hover {
+  background-color: #ef4444;
+  /* Stronger red */
+  color: white;
+  border-color: #dc2626;
+}
+
+/* ======= TOOLTIPS DE MEDICIÓN ======= */
+.ol-tooltip {
+  position: relative;
+  background: rgba(0, 0, 0, 0.5);
+  border-radius: 4px;
+  color: white;
+  padding: 4px 8px;
+  opacity: 0.7;
+  white-space: nowrap;
+  font-size: 12px;
+  cursor: default;
   user-select: none;
 }
 
