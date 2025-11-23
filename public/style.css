@@ -46,7 +46,8 @@ body {
 }
 
 .sidebar.is-open {
-  width: 280px;
+  width: 330px;
+  /* Increased width */
   padding: 1rem;
   /* Padding solo cuando está abierto para evitar saltos */
   border-right: 1px solid #ddd;
@@ -86,6 +87,8 @@ body {
   /* Asegura ancho mínimo para el contenido */
   opacity: 0;
   transition: opacity 0.2s ease;
+  overflow-x: hidden;
+  /* Prevent horizontal scroll */
 }
 
 .sidebar.is-open .layers-panel {

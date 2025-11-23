@@ -520,14 +520,17 @@ export function inicializarHerramientas() {
     const sidebar = document.querySelector('.sidebar');
     if (sidebar) {
       sidebar.classList.toggle('is-open');
+      // Cambiar icono del botón
+      const btn = document.querySelector('.ol-custom-tool-btn[title="Mostrar/Ocultar capas"]');
+      if (btn) {
+        btn.innerHTML = sidebar.classList.contains('is-open') ? '✕' : '☰';
+      }
     }
   }
 
   // Botón de basura (lo creamos antes para poder referenciarlo, pero lo añadimos al final)
   btnTrash = crearBoton('🗑️', 'Borrar mediciones', () => {
     limpiarMedicion();
-    // También limpiamos la capa de edición si se desea borrar todo
-    // editLayer.getSource().clear(); 
   }, true);
   btnTrash.classList.add('btn-trash');
   // Aseguramos que empiece oculto
