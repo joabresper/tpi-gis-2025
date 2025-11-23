@@ -31,6 +31,7 @@ let measureInteraction = null;
 let measureTooltip = null;
 let measureOverlay = null;
 let measureListener = null;
+let measureStaticOverlays = [];
 
 function limpiarMedicion() {
   if (measureInteraction) {
@@ -45,6 +46,11 @@ function limpiarMedicion() {
     ol.Observable.unByKey(measureListener);
     measureListener = null;
   }
+
+  // Limpiar tooltips estáticos (los de los vértices)
+  measureStaticOverlays.forEach(overlay => base_map.removeOverlay(overlay));
+  measureStaticOverlays = [];
+
   measureTooltip = null;
   measureLayer.getSource().clear();
 }
@@ -91,8 +97,48 @@ export function activarMedirDistancia() {
     measureTooltip.className = 'ol-tooltip ol-tooltip-measure';
     measureOverlay.setElement(measureTooltip);
 
+    let count = 0;
+
     const geometry = sketch.getGeometry();
-    measureListener = geometry.on('change', () => {
+    measureListener = geometry.on('change', evt => {
+      const geom = evt.target;
+      const coords = geom.getCoordinates();
+
+      // Detectar si se agregó un nuevo vértice
+      if (coords.length > count) {
+        if (count > 0) {
+          // El último punto agregado es el penúltimo en el array (el último es el cursor)
+          // Pero en 'change' el cursor mueve el último punto.
+          // Cuando se hace click, se fija un punto.
+          // OpenLayers Draw interaction: coordinates length increases when a point is added.
+
+          const index = coords.length - 2;
+          if (index >= 0) {
+            const point = coords[index];
+            // Calcular distancia hasta ese punto
+            const line = new ol.geom.LineString(coords.slice(0, index + 1));
+            const length = ol.sphere.getLength(line, { projection: 'EPSG:4326' });
+
+            const output = length > 1000
+              ? (length / 1000).toFixed(2) + ' km'
+              : length.toFixed(2) + ' m';
+
+            const el = document.createElement('div');
+            el.className = 'ol-tooltip ol-tooltip-static';
+            el.innerHTML = output;
+
+            const overlay = new ol.Overlay({
+              element: el,
+              position: point,
+              positioning: 'bottom-center',
+              offset: [0, -7]
+            });
+            base_map.addOverlay(overlay);
+            measureStaticOverlays.push(overlay);
+          }
+        }
+        count = coords.length;
+      }
       actualizarMedida(geometry);
     });
   });
@@ -103,6 +149,88 @@ export function activarMedirDistancia() {
     if (measureTooltip) {
       measureTooltip.className = 'ol-tooltip ol-tooltip-static';
       actualizarMedida(geometry);
+      measureOverlay.setOffset([0, -7]);
+    }
+
+    if (measureListener) {
+      ol.Observable.unByKey(measureListener);
+      measureListener = null;
+    }
+
+    sketch = null;
+  });
+
+  measureInteraction.on('drawabort', () => {
+    if (measureOverlay) {
+      measureOverlay.setElement(null);
+    }
+    measureTooltip = null;
+
+    if (measureListener) {
+      ol.Observable.unByKey(measureListener);
+      measureListener = null;
+    }
+
+    sketch = null;
+  });
+
+  base_map.addInteraction(measureInteraction);
+}
+
+export function activarMedirArea() {
+  limpiarMedicion();
+
+  measureInteraction = new ol.interaction.Draw({
+    source: measureLayer.getSource(),
+    type: 'Polygon'
+  });
+
+  measureOverlay = new ol.Overlay({
+    element: document.createElement('div'),
+    positioning: 'bottom-center',
+    stopEvent: false,
+    offset: [0, -10]
+  });
+
+  base_map.addOverlay(measureOverlay);
+
+  let sketch;
+
+  function actualizarArea(geometry) {
+    if (!measureTooltip || !geometry) return;
+
+    const area = ol.sphere.getArea(geometry, { projection: 'EPSG:4326' });
+    let output;
+    if (area > 1000000) {
+      output = (area / 1000000).toFixed(2) + ' km²';
+    } else {
+      output = area.toFixed(2) + ' m²';
+    }
+
+    measureTooltip.innerHTML = output;
+
+    const coordinates = geometry.getInteriorPoint().getCoordinates();
+    measureOverlay.setPosition(coordinates);
+  }
+
+  measureInteraction.on('drawstart', e => {
+    sketch = e.feature;
+    measureTooltip = document.createElement('div');
+    measureTooltip.className = 'ol-tooltip ol-tooltip-measure';
+    measureOverlay.setElement(measureTooltip);
+
+    const geometry = sketch.getGeometry();
+    measureListener = geometry.on('change', () => {
+      actualizarArea(geometry);
+    });
+  });
+
+  measureInteraction.on('drawend', e => {
+    const geometry = e.feature.getGeometry();
+
+    if (measureTooltip) {
+      measureTooltip.className = 'ol-tooltip ol-tooltip-static';
+      actualizarArea(geometry);
       measureOverlay.setOffset([0, -7]);
     }
 
@@ -237,7 +365,7 @@ export function activarConsultaPunto() {
       .catch(err => console.error('Error en GetFeatureInfo:', err));
   });
 }
-/*Luego modifico esto las consultas no funcionan todavia*/ 
+
 export function activarConsultaRectangulo() {
   limpiarConsulta();
 
@@ -372,11 +500,13 @@ export function inicializarHerramientas() {
   }
 
   const btnMeasure = crearBoton('📏', 'Medir distancia', activarMedirDistancia);
+  const btnMeasureArea = crearBoton('📐', 'Medir área', activarMedirArea);
   const btnPoint = crearBoton('📍', 'Consulta por punto', activarConsultaPunto);
   const btnRect = crearBoton('▭', 'Consulta por rectángulo', activarConsultaRectangulo);
   const btnAdd = crearBoton('+', 'Agregar elemento', activarAgregarElemento);
 
   container.appendChild(btnMeasure);
+  container.appendChild(btnMeasureArea);
   container.appendChild(btnPoint);
   container.appendChild(btnRect);
   container.appendChild(btnAdd);
