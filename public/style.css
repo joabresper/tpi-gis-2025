@@ -25,17 +25,32 @@ body {
   overflow: hidden;
 }
 
-/* ======= PANEL LATERAL ======= */
+/* ======= PANEL LATERAL (SIDEBAR) ======= */
 .sidebar {
-  width: 280px;
+  width: 0;
+  /* Por defecto cerrado o controlado por JS */
   background-color: #f8f9fa;
   border-right: 1px solid #ddd;
-  padding: 1rem;
   box-sizing: border-box;
 
+  /* Flex item properties */
+  flex-shrink: 0;
   display: flex;
   flex-direction: column;
-  gap: 1.5rem;
+
+  /* Animación de ancho */
+  transition: width 0.3s ease;
+  overflow: hidden;
+  white-space: nowrap;
+  /* Evita que el texto se rompa al cerrar */
+}
+
+.sidebar.is-open {
+  width: 330px;
+  /* Increased width */
+  padding: 1rem;
+  /* Padding solo cuando está abierto para evitar saltos */
+  border-right: 1px solid #ddd;
 }
 
 /* Título del panel */
@@ -47,19 +62,38 @@ body {
   font-weight: 600;
 }
 
+/* En dispositivos chicos, comportamiento overlay */
+@media (max-width: 768px) {
+  .sidebar {
+    position: absolute;
+    height: 100%;
+    z-index: 2000;
+    box-shadow: 2px 0 5px rgba(0, 0, 0, 0.2);
+  }
+}
+
 /* ======= PANEL DE CAPAS ======= */
 .layers-panel {
-  flex: 1 1 auto;              
-  min-height: 0;               
+  flex: 1 1 auto;
+  min-height: 0;
   display: flex;
   flex-direction: column;
   background-color: #ffffff;
   border: 1px solid #e3e3e3;
   border-radius: 8px;
   padding: 0.75rem;
-  box-shadow: 0 1px 3px rgba(0,0,0,0.08);
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
+  min-width: 240px;
+  /* Asegura ancho mínimo para el contenido */
+  opacity: 0;
+  transition: opacity 0.2s ease;
+  overflow-x: hidden;
+  /* Prevent horizontal scroll */
 }
 
+.sidebar.is-open .layers-panel {
+  opacity: 1;
+}
 
 /* Título de Capas */
 .layers-panel h2 {
@@ -109,7 +143,8 @@ body {
   width: 16px;
   height: 16px;
   margin: 0;
-  accent-color: #1976d2;    /* Azul profesional */
+  accent-color: #1976d2;
+  /* Azul profesional */
 }
 
 /* Scrollbar estilizado */
@@ -148,52 +183,105 @@ body {
   border-top: 1px solid #ccc;
 }
 
-.layers-panel ul::-webkit-scrollbar {
-  width: 6px;
-}
-
-.layers-panel ul::-webkit-scrollbar-thumb {
-  background: #888;
-  border-radius: 4px;
-}
-
-.layers-panel ul::-webkit-scrollbar-thumb:hover {
-  background: #555;
-}
-
 /* ======= CONTROL DE HERRAMIENTAS ======= */
 
 .ol-custom-tools {
   position: absolute;
-  top: 80px;             /* Debajo del control de zoom */
-  left: 0.5em;
+  top: 80px;
+  left: 1rem;
+  background-color: white;
+  border-radius: 12px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  padding: 8px;
   display: flex;
   flex-direction: column;
-  gap: 4px;
-  z-index: 1000;
+  gap: 8px;
+  z-index: 1001;
+  /* Mayor que el sidebar para que no se oculte */
 }
 
 .ol-custom-tool-btn {
-  background-color: white;
-  border: none;
-  padding: 4px 6px;
+  width: 36px;
+  height: 36px;
+  border-radius: 8px;
+  border: 2px solid transparent;
+  background-color: transparent;
   cursor: pointer;
-  font-size: 16px;
-  line-height: 1;
-  width: 28px;
-  height: 28px;
-
-  border-radius: 4px;
-  box-shadow: 0 1px 4px rgba(0,0,0,0.3);
-  text-align: center;
+  font-size: 20px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  user-select: none;
+  transition: background-color 0.2s;
 }
 
 .ol-custom-tool-btn:hover {
-  background-color: #eee;
+  background-color: #f0f0f0;
 }
 
 .ol-custom-tool-btn.active-tool {
-  background-color: #1976d2;
-  color: white;
+  background-color: #e0e7ff;
+  color: #3b82f6;
+  border-color: #3b82f6;
 }
 
+.ol-custom-tool-btn.btn-trash {
+  position: absolute;
+  left: 100%;
+  margin-left: 10px;
+  background-color: #fee2e2;
+  /* Light red */
+  color: #b91c1c;
+  border-color: #fca5a5;
+  display: none;
+  /* Hidden by default */
+  z-index: 1001;
+}
+
+.ol-custom-tool-btn.btn-trash:hover {
+  background-color: #ef4444;
+  /* Stronger red */
+  color: white;
+  border-color: #dc2626;
+}
+
+/* ======= TOOLTIPS DE MEDICIÓN ======= */
+.ol-tooltip {
+  position: relative;
+  background: rgba(0, 0, 0, 0.5);
+  border-radius: 4px;
+  color: white;
+  padding: 4px 8px;
+  opacity: 0.7;
+  white-space: nowrap;
+  font-size: 12px;
+  cursor: default;
+  user-select: none;
+}
+
+.ol-tooltip-measure {
+  opacity: 1;
+  font-weight: bold;
+}
+
+.ol-tooltip-static {
+  background-color: #ffcc33;
+  color: black;
+  border: 1px solid white;
+}
+
+.ol-tooltip-measure:before,
+.ol-tooltip-static:before {
+  border-top: 6px solid rgba(0, 0, 0, 0.5);
+  border-right: 6px solid transparent;
+  border-left: 6px solid transparent;
+  content: "";
+  position: absolute;
+  bottom: -6px;
+  margin-left: -7px;
+  left: 50%;
+}
+
+.ol-tooltip-static:before {
+  border-top-color: #ffcc33;
+}
