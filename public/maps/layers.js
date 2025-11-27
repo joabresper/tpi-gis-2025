@@ -256,7 +256,7 @@ export const capas = {
   }),
 
   gs_pais_lim: new ol.layer.Tile({
-    title: 'Países Limítrofes',
+    title: 'Límites del País',
     visible: false,
     source: new ol.source.TileWMS({
       url: gs.url,
