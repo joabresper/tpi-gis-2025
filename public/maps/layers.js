@@ -256,7 +256,7 @@ export const capas = {
   }),
 
   gs_pais_lim: new ol.layer.Tile({
-    title: 'País Límite',
+    title: 'Países Limítrofes',
     visible: false,
     source: new ol.source.TileWMS({
       url: gs.url,
@@ -274,7 +274,7 @@ export const capas = {
   }),
 
   gs_puente_red_vial_puntos: new ol.layer.Tile({
-    title: 'Puentes Red Vial (Puntos)',
+    title: 'Puentes Red Vial',
     visible: false,
     source: new ol.source.TileWMS({
       url: gs.url,
