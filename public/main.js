@@ -1,4 +1,5 @@
 import { activar_desactivar_capa } from './maps/functions.js';
+import { inicializar_boton_centrar } from './maps/functions.js';
 import { base_map } from './maps/maps.js';
 import { capas } from './maps/layers.js';
 import { generar_lista_capas } from './ui.js';
@@ -14,6 +15,7 @@ window.addEventListener('DOMContentLoaded', () => {
 
   // 2. Generacion dinamica de elementos
   generar_lista_capas(capas);
+  inicializar_boton_centrar();
 
   // 3. Agregar listeners o inicializar herramientas
   activar_desactivar_capa(capas);
