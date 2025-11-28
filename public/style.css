@@ -285,3 +285,30 @@ body {
 .ol-tooltip-static:before {
   border-top-color: #ffcc33;
 }
+
+.map-control-button {
+    /* 1. Fija el botón en la ventana (viewport) */
+    position: fixed; 
+    
+    /* 2. Posicionamiento: 20px desde la derecha y 20px desde abajo */
+    right: 20px;
+    bottom: 20px;
+    
+    /* 3. Estilo Cuadrado (ajusta padding o width/height según necesites) */
+    width: 40px; 
+    height: 40px;
+    padding: 0; /* Quita el padding por defecto para que sea un cuadrado perfecto */
+    
+    /* 4. Estilos visuales */
+    background-color: #fff;
+    border: 1px solid #ccc;
+    border-radius: 4px; /* Bordes ligeramente redondeados */
+    cursor: pointer;
+    font-size: 1.2em;
+    z-index: 1000; /* Asegura que esté por encima del mapa */
+}
+
+/* Estilos de hover para mejor experiencia de usuario */
+.map-control-button:hover {
+    background-color: #f0f0f0;
+}

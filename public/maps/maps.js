@@ -1,6 +1,6 @@
 import { base_layer, capas } from "./layers.js";
 
-export const base_map = new ol.Map({
+const base_map = new ol.Map({
 	target: 'map',
 	layers: [base_layer, ...Object.values(capas)],
 	view: new ol.View({
@@ -9,3 +9,7 @@ export const base_map = new ol.Map({
 		zoom: 4
 	})
 })
+
+export const INITIAL_CENTER = base_map.getView().getCenter();
+export const INITIAL_ZOOM = base_map.getView().getZoom();
+export { base_map };
