@@ -267,6 +267,7 @@ export const capas = {
   gs_provincias: new ol.layer.Tile({
     title: 'Provincias',
     visible: false,
+    zIndex: -1,  // Esta capa se mostrará por debajo de las demás
     source: new ol.source.TileWMS({
       url: gs.url,
       params: { LAYERS: `${gs.workspace}:provincias` }
