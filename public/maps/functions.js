@@ -1,4 +1,7 @@
 import {base_map, INITIAL_CENTER, INITIAL_ZOOM} from './maps.js';
+import { Z_INDEX_BASE } from '../const.js';
+
+let globalCounter = 0;
 
 export function activar_desactivar_capa(capas) {
 	const check_boxes = document.querySelectorAll('.layers-panel input[type="checkbox"]');
@@ -10,6 +13,10 @@ export function activar_desactivar_capa(capas) {
 
 			if (!layer) return;
 
+            globalCounter ++;
+            const newZIndex = Z_INDEX_BASE[layer.get('type')] + globalCounter;
+            layer.setZIndex(newZIndex);
+            
 			layer.setVisible(e.target.checked);
 		});
 	});
