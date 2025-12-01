@@ -312,3 +312,69 @@ body {
 .map-control-button:hover {
     background-color: #f0f0f0;
 }
+
+.legend-box {
+  position: absolute;
+  top: 15px;
+  right: 10px;
+  
+  width: max-content; /* El ancho será igual a lo que mida la imagen */
+  min-width: 200px;   /* Pero nunca menos de 200px */
+  max-width: 400px;   /* Si la imagen es GIGANTE, paramos aquí */
+  
+  overflow-x: auto;   
+  
+  background-color: white;
+  border: 2px solid #ccc;
+  border-radius: 5px;
+  padding: 10px;
+  z-index: 1000;
+  max-height: calc(100% - 100px);
+  box-shadow: 0 4px 6px rgba(0,0,0,0.3);
+}
+
+.legend-content img {
+    display: block;
+    max-width: none; /* Importante para que no se achique si es larga */
+}
+
+.legend-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-bottom: 1px solid #eee;
+    padding-bottom: 5px;
+    margin-bottom: 5px;
+    font-weight: bold;
+}
+
+.close-btn {
+    background: none;
+    border: none;
+    cursor: pointer;
+    font-weight: bold;
+    color: #666;
+}
+
+.close-btn:hover {
+    color: red;
+}
+
+.btn-ver-leyenda {
+    display: block;           /* Para que salte a la línea de abajo */
+    margin-top: 5px;
+    margin-left: 25px;        /* Identación para que quede bajo el texto, no bajo el checkbox */
+    font-size: 0.8rem;
+    background-color: #f0f0f0;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    padding: 2px 8px;
+    cursor: pointer;
+    color: #333;
+    transition: background 0.2s;
+}
+
+.btn-ver-leyenda:hover {
+    background-color: #e0e0e0;
+    border-color: #999;
+}
