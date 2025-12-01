@@ -293,112 +293,145 @@ function limpiarConsulta() {
     infoOverlay = null;
     infoElement = null;
   }
+  document.getElementById('popup-central').style.display = 'none';
+
 }
 
 function obtenerCapasWMSVisibles() {
   const visibles = [];
+
   base_map.getLayers().forEach(layer => {
-    if (layer instanceof ol.layer.Tile && layer.getVisible && layer.getVisible()) {
-      const source = layer.getSource();
-      if (source instanceof ol.source.TileWMS) {
-        visibles.push(layer);
-      }
-    }
+    if (!(layer instanceof ol.layer.Tile)) return;
+    if (!layer.getVisible || !layer.getVisible()) return;
+
+    const source = layer.getSource && layer.getSource();
+    if (!(source instanceof ol.source.TileWMS)) return;
+
+    const params = source.getParams ? source.getParams() : null;
+    if (!params || !params.LAYERS) return;
+
+    // Solo capas de TU workspace (tpigis)
+    if (!params.LAYERS.startsWith(`${gs.workspace}:`)) return;
+
+    visibles.push(layer);
   });
+
   return visibles;
 }
 
-function mostrarResultadoPopup(features, coordinate) {
-  if (!features || features.length === 0) return;
+function mostrarResultadoPopup(features) {
+  const popup = document.getElementById('popup-central');
 
-  crearInfoOverlay();
+  if (!features || features.length === 0) {
+    popup.style.display = 'none';
+    return;
+  }
 
-  const props = features[0].properties || features[0];
-  const contenido = Object.entries(props)
-    .map(([k, v]) => `<strong>${k}</strong>: ${v}`)
-    .join('<br>');
+  const props = features[0].properties ?? features[0];
 
-  infoElement.innerHTML = contenido || 'Sin atributos';
-  infoOverlay.setPosition(coordinate);
+  // Campos a ocultar
+  const HIDDEN_FIELDS = ['gid', 'geom', 'prov', 'prov_1', 'id', 'gid_1', 'igds_color','igds_level',  'igds_weigh', 'coord', 'group','t_act','igds_type','signo'  ];
+
+  const html = Object.entries(props)
+    .filter(([k]) => !HIDDEN_FIELDS.includes(k))
+    .map(([k, v]) => `<div><strong>${k}</strong>: ${v}</div>`)
+    .join('');
+
+  popup.innerHTML = html;
+  popup.style.display = 'block';
 }
+
+
+function obtenerCapaYTablaActiva() {
+  const capasVisibles = obtenerCapasWMSVisibles();
+  if (capasVisibles.length === 0) return null;
+
+  const layer = capasVisibles[0];
+  const source = layer.getSource();
+  const params = source.getParams();
+
+  const fullName = params.LAYERS || '';
+  const parts = fullName.split(':');
+  const layerTable = parts.length === 2 ? parts[1] : fullName;
+
+  return { layer, layerTable };
+}
+
+
 
 export function activarConsultaPunto() {
   limpiarConsulta();
 
-  identifyClickKey = base_map.on('singleclick', evt => {
-    const coordinate = evt.coordinate;
-    const view = base_map.getView();
-    const resolution = view.getResolution();
-    const projection = view.getProjection();
+  identifyClickKey = base_map.on('singleclick', async evt => {
+    const coordinate = evt.coordinate;  // el mapa está en EPSG:4326
+    const info = obtenerCapaYTablaActiva();
+    if (!info) return;
 
-    const capasVisibles = obtenerCapasWMSVisibles();
-    if (capasVisibles.length === 0) return;
+    const { layer, layerTable } = info;
 
-    const layer = capasVisibles[0];
-    const source = layer.getSource();
-    const params = source.getParams();
+    const lon = coordinate[0];
+    const lat = coordinate[1];
 
-    const infoUrl = source.getFeatureInfoUrl(
-      coordinate,
-      resolution,
-      projection,
-      {
-        INFO_FORMAT: 'application/json',
-        QUERY_LAYERS: params.LAYERS,
-        FEATURE_COUNT: 10
-      }
-    );
+    try {
+      const resp = await fetch('/api/query/point', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          layerTable,
+          lon,
+          lat
+        })
+      });
 
-    if (!infoUrl) return;
-
-    fetch(infoUrl)
-      .then(r => r.json())
-      .then(json => {
-        const features = json.features || [];
-        mostrarResultadoPopup(features, coordinate);
-      })
-      .catch(err => console.error('Error en GetFeatureInfo:', err));
+      const geojson = await resp.json();
+      const features = geojson.features || [];
+      mostrarResultadoPopup(features, coordinate);
+      // Si después querés highlight, acá podés llamar a una función similar a resaltarFeaturesFromGeoJSON
+    } catch (err) {
+      console.error('Error consulta punto BDD:', err);
+    }
   });
 }
+
 
 export function activarConsultaRectangulo() {
   limpiarConsulta();
 
-  const wfsUrl = gs.wfsUrl || gs.url.replace('/wms', '/wfs');
-
   dragBoxInteraction = new ol.interaction.DragBox();
   base_map.addInteraction(dragBoxInteraction);
 
-  dragBoxInteraction.on('boxend', () => {
+  dragBoxInteraction.on('boxend', async () => {
+    const info = obtenerCapaYTablaActiva();
+    if (!info) return;
+
+    const { layer, layerTable } = info;
+
     const extent = dragBoxInteraction.getGeometry().getExtent();
-    const capasVisibles = obtenerCapasWMSVisibles();
-    if (capasVisibles.length === 0) return;
-
-    const layer = capasVisibles[0];
-    const source = layer.getSource();
-    const params = source.getParams();
-    const typeName = params.LAYERS;
-
-    const srs = 'EPSG:4326';
-    const bboxParam = extent.join(',') + ',' + srs;
-
-    const url = `${wfsUrl}?service=WFS&version=1.1.0&request=GetFeature` +
-      `&typeName=${encodeURIComponent(typeName)}` +
-      `&outputFormat=application/json` +
-      `&srsName=${encodeURIComponent(srs)}` +
-      `&bbox=${encodeURIComponent(bboxParam)}`;
-
+    const [minx, miny, maxx, maxy] = extent;
     const center = ol.extent.getCenter(extent);
 
-    fetch(url)
-      .then(r => r.json())
-      .then(json => {
-        const features = json.features || [];
-        mostrarResultadoPopup(features, center);
-      })
-      .catch(err => console.error('Error en consulta por rectángulo (WFS):', err));
+    try {
+      const resp = await fetch('/api/query/rect', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          layerTable,
+          minx,
+          miny,
+          maxx,
+          maxy
+        })
+      });
+
+      const geojson = await resp.json();
+      const features = geojson.features || [];
+      mostrarResultadoPopup(features, center);
+    } catch (err) {
+      console.error('Error consulta rectángulo BDD:', err);
+    }
   });
 }
+
 
 // ===============================
 // ALTA DE NUEVOS ELEMENTOS
