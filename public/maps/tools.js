@@ -294,7 +294,6 @@ function limpiarConsulta() {
     infoElement = null;
   }
   document.getElementById('popup-central').style.display = 'none';
-
 }
 
 function obtenerCapasWMSVisibles() {
@@ -332,12 +331,19 @@ function mostrarResultadoPopup(features) {
   // Campos a ocultar
   const HIDDEN_FIELDS = ['gid', 'geom', 'prov', 'prov_1', 'id', 'gid_1', 'igds_color', 'igds_level', 'igds_weigh', 'coord', 'group', 't_act', 'igds_type', 'signo'];
 
-  const html = Object.entries(props)
+  const dataHtml = Object.entries(props)
     .filter(([k]) => !HIDDEN_FIELDS.includes(k))
     .map(([k, v]) => `<div><strong>${k}</strong>: ${v}</div>`)
     .join('');
 
-  popup.innerHTML = html;
+  // HTML con botón de cierre
+  popup.innerHTML = `
+    <button class="popup-close-btn" onclick="document.getElementById('popup-central').style.display='none'">✕</button>
+    <div class="popup-content">
+      ${dataHtml}
+    </div>
+  `;
+
   popup.style.display = 'block';
 }
 
