@@ -119,7 +119,7 @@ export const capas = {
     zIndex: Z_INDEX_BASE[self.type],
     source: new ol.source.TileWMS({
       url: gs.url,
-      params: { LAYERS: `${gs.workspace}:edif_depor_y_esparcim` }
+      params: { LAYERS: `${gs.workspace}:edif_depor_y_esparcimiento` }
     })
   }),
 
@@ -306,7 +306,7 @@ export const capas = {
     zIndex: Z_INDEX_BASE[self.type],
     source: new ol.source.TileWMS({
       url: gs.url,
-      params: { LAYERS: `${gs.workspace}:obra_de_comunicacion` }
+      params: { LAYERS: `${gs.workspace}:obra_de_comunicación` }
     })
   }),
 
