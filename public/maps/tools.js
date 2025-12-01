@@ -330,7 +330,7 @@ function mostrarResultadoPopup(features) {
   const props = features[0].properties ?? features[0];
 
   // Campos a ocultar
-  const HIDDEN_FIELDS = ['gid', 'geom', 'prov', 'prov_1', 'id', 'gid_1', 'igds_color','igds_level',  'igds_weigh', 'coord', 'group','t_act','igds_type','signo'  ];
+  const HIDDEN_FIELDS = ['gid', 'geom', 'prov', 'prov_1', 'id', 'gid_1', 'igds_color', 'igds_level', 'igds_weigh', 'coord', 'group', 't_act', 'igds_type', 'signo'];
 
   const html = Object.entries(props)
     .filter(([k]) => !HIDDEN_FIELDS.includes(k))
@@ -379,7 +379,8 @@ export function activarConsultaPunto() {
         body: JSON.stringify({
           layerTable,
           lon,
-          lat
+          lat,
+          radius: 0.001 // aca se configura el radio al hacer la consulta por punto 0.001 = 111 metro
         })
       });
 

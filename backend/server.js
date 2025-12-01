@@ -30,14 +30,19 @@ function getSafeTableName(layerTable) {
 // ==========================
 app.post('/api/query/point', async (req, res) => {
   try {
-    const { layerTable, lon, lat } = req.body;
+    const { layerTable, lon, lat, radius } = req.body;
 
     if (layerTable == null || lon == null || lat == null) {
       return res.status(400).json({ error: 'Parámetros incompletos' });
     }
 
+    if (radius == null || radius <= 0) {
+      return res.status(400).json({ error: 'El parámetro "radius" es requerido y debe ser mayor a 0' });
+    }
+
     const table = getSafeTableName(layerTable);
 
+    // Usar ST_Buffer para crear un área de búsqueda alrededor del punto
     const sql = `
       SELECT
         ST_AsGeoJSON(geom) AS geom,
@@ -45,12 +50,15 @@ app.post('/api/query/point', async (req, res) => {
       FROM ${table} AS t
       WHERE ST_Intersects(
         t.geom,
-        ST_SetSRID(ST_Point($1, $2), 4326)
+        ST_Buffer(
+          ST_SetSRID(ST_Point($1, $2), 4326),
+          $3
+        )
       )
       LIMIT 50;
     `;
 
-    const result = await runQuery(sql, [lon, lat]);
+    const result = await runQuery(sql, [lon, lat, radius]);
 
     const features = result.rows.map(row => ({
       type: 'Feature',
@@ -97,8 +105,7 @@ app.post('/api/query/rect', async (req, res) => {
       LIMIT 200;
     `;
 
-  const result = await runQuery(sql, [minx, miny, maxx, maxy]);
-
+    const result = await runQuery(sql, [minx, miny, maxx, maxy]);
 
     const features = result.rows.map(row => ({
       type: 'Feature',
