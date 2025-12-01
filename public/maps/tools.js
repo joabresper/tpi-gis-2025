@@ -328,23 +328,66 @@ function mostrarResultadoPopup(features) {
 
   const props = features[0].properties ?? features[0];
 
-  // Campos a ocultar
+  // Campos a ocultar completamente
   const HIDDEN_FIELDS = ['gid', 'geom', 'prov', 'prov_1', 'id', 'gid_1', 'igds_color', 'igds_level', 'igds_weigh', 'coord', 'group', 't_act', 'igds_type', 'signo'];
 
-  const dataHtml = Object.entries(props)
-    .filter(([k]) => !HIDDEN_FIELDS.includes(k))
-    .map(([k, v]) => `<div><strong>${k}</strong>: ${v}</div>`)
+  // Campos principales a mostrar inicialmente (ajusta según tus necesidades)
+  const PRIMARY_FIELDS = ['ac', 'sp', 'tipo', 'cargo', 'datum'];
+
+  // Filtrar todos los campos visibles
+  const allFields = Object.entries(props)
+    .filter(([k]) => !HIDDEN_FIELDS.includes(k));
+
+  // Separar en campos principales y detalles
+  const primaryFieldsData = allFields.filter(([k]) => PRIMARY_FIELDS.includes(k));
+  const detailFieldsData = allFields.filter(([k]) => !PRIMARY_FIELDS.includes(k));
+
+  // Generar HTML para campos principales
+  const primaryHtml = primaryFieldsData
+    .map(([k, v]) => `<div class="popup-field"><strong>${k}:</strong> ${v}</div>`)
     .join('');
 
-  // HTML con botón de cierre
+  // Generar HTML para campos de detalles
+  const detailHtml = detailFieldsData
+    .map(([k, v]) => `<div class="popup-field"><strong>${k}:</strong> ${v}</div>`)
+    .join('');
+
+  // HTML completo con sección colapsable
   popup.innerHTML = `
     <button class="popup-close-btn" onclick="document.getElementById('popup-central').style.display='none'">✕</button>
     <div class="popup-content">
-      ${dataHtml}
+      <div class="popup-primary">
+        ${primaryHtml}
+      </div>
+      
+      <div id="popup-details" class="popup-details" style="display: none;">
+        ${detailHtml}
+      </div>
+      
+      <button id="popup-toggle-btn" class="popup-toggle-btn" onclick="togglePopupDetails()">
+        <span id="popup-toggle-icon">▼</span> Más Información
+      </button>
     </div>
   `;
 
   popup.style.display = 'block';
+}
+
+// Función global para alternar la visibilidad de los detalles
+window.togglePopupDetails = function () {
+  const details = document.getElementById('popup-details');
+  const btn = document.getElementById('popup-toggle-btn');
+  const icon = document.getElementById('popup-toggle-icon');
+
+  if (details.style.display === 'none') {
+    details.style.display = 'block';
+    icon.textContent = '▲';
+    btn.innerHTML = `<span id="popup-toggle-icon">▲</span> Menos Información`;
+  } else {
+    details.style.display = 'none';
+    icon.textContent = '▼';
+    btn.innerHTML = `<span id="popup-toggle-icon">▼</span> Más Información`;
+  }
 }
 
 

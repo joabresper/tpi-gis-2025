@@ -28,32 +28,23 @@ body {
 /* ======= PANEL LATERAL (SIDEBAR) ======= */
 .sidebar {
   width: 0;
-  /* Por defecto cerrado o controlado por JS */
   background-color: #f8f9fa;
   border-right: 1px solid #ddd;
   box-sizing: border-box;
-
-  /* Flex item properties */
   flex-shrink: 0;
   display: flex;
   flex-direction: column;
-
-  /* Animación de ancho */
   transition: width 0.3s ease;
   overflow: hidden;
   white-space: nowrap;
-  /* Evita que el texto se rompa al cerrar */
 }
 
 .sidebar.is-open {
   width: 330px;
-  /* Increased width */
   padding: 1rem;
-  /* Padding solo cuando está abierto para evitar saltos */
   border-right: 1px solid #ddd;
 }
 
-/* Título del panel */
 .sidebar h2 {
   font-size: 1.15rem;
   color: #222;
@@ -62,7 +53,6 @@ body {
   font-weight: 600;
 }
 
-/* En dispositivos chicos, comportamiento overlay */
 @media (max-width: 768px) {
   .sidebar {
     position: absolute;
@@ -84,18 +74,15 @@ body {
   padding: 0.75rem;
   box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
   min-width: 240px;
-  /* Asegura ancho mínimo para el contenido */
   opacity: 0;
   transition: opacity 0.2s ease;
   overflow-x: hidden;
-  /* Prevent horizontal scroll */
 }
 
 .sidebar.is-open .layers-panel {
   opacity: 1;
 }
 
-/* Título de Capas */
 .layers-panel h2 {
   font-size: 1rem;
   font-weight: 600;
@@ -103,7 +90,6 @@ body {
   margin: 0 0 0.6rem 0;
 }
 
-/* Lista scrollable */
 .layers-panel ul {
   list-style: none;
   padding: 0;
@@ -112,23 +98,18 @@ body {
   overflow-y: auto;
 }
 
-/* Cada ítem de capa */
 .layers-panel li {
   padding: 2px 0;
 }
 
-/* Caja que contiene checkbox + texto */
 .layers-panel li label {
   display: flex;
   align-items: center;
   gap: 0.45rem;
-
   font-size: 0.92rem;
   color: #222;
-
   padding: 6px;
   border-radius: 6px;
-
   cursor: pointer;
   user-select: none;
   transition: background-color 0.15s ease;
@@ -138,16 +119,13 @@ body {
   background-color: #eef3ff;
 }
 
-/* Checkbox moderno */
 .layers-panel li input[type="checkbox"] {
   width: 16px;
   height: 16px;
   margin: 0;
   accent-color: #1976d2;
-  /* Azul profesional */
 }
 
-/* Scrollbar estilizado */
 .layers-panel ul::-webkit-scrollbar {
   width: 6px;
 }
@@ -160,7 +138,6 @@ body {
 .layers-panel ul::-webkit-scrollbar-thumb:hover {
   background-color: #999;
 }
-
 
 /* ======= ÁREA DEL MAPA ======= */
 .map-area {
@@ -184,7 +161,6 @@ body {
 }
 
 /* ======= CONTROL DE HERRAMIENTAS ======= */
-
 .ol-custom-tools {
   position: absolute;
   top: 80px;
@@ -197,7 +173,6 @@ body {
   flex-direction: column;
   gap: 8px;
   z-index: 1001;
-  /* Mayor que el sidebar para que no se oculte */
 }
 
 .ol-custom-tool-btn {
@@ -230,17 +205,14 @@ body {
   left: 100%;
   margin-left: 10px;
   background-color: #fee2e2;
-  /* Light red */
   color: #b91c1c;
   border-color: #fca5a5;
   display: none;
-  /* Hidden by default */
   z-index: 1001;
 }
 
 .ol-custom-tool-btn.btn-trash:hover {
   background-color: #ef4444;
-  /* Stronger red */
   color: white;
   border-color: #dc2626;
 }
@@ -287,31 +259,20 @@ body {
 }
 
 .map-control-button {
-  /* 1. Fija el botón en la ventana (viewport) */
   position: fixed;
-
-  /* 2. Posicionamiento: 20px desde la derecha y 20px desde abajo */
   right: 20px;
   bottom: 20px;
-
-  /* 3. Estilo Cuadrado (ajusta padding o width/height según necesites) */
   width: 40px;
   height: 40px;
   padding: 0;
-  /* Quita el padding por defecto para que sea un cuadrado perfecto */
-
-  /* 4. Estilos visuales */
   background-color: #fff;
   border: 1px solid #ccc;
   border-radius: 4px;
-  /* Bordes ligeramente redondeados */
   cursor: pointer;
   font-size: 1.2em;
   z-index: 1000;
-  /* Asegura que esté por encima del mapa */
 }
 
-/* Estilos de hover para mejor experiencia de usuario */
 .map-control-button:hover {
   background-color: #f0f0f0;
 }
@@ -333,7 +294,6 @@ body {
 
 .popup-central {
   position: fixed;
-  /* Centrado en pantalla */
   top: 50%;
   left: 50%;
   transform: translate(-50%, -50%);
@@ -347,7 +307,6 @@ body {
   font-size: 14px;
   z-index: 9999;
   display: none;
-  /* Oculto por defecto */
 }
 
 .popup-central strong {
@@ -385,4 +344,72 @@ body {
 .popup-content {
   position: relative;
   padding-top: 8px;
+}
+
+/* Campos del popup */
+.popup-field {
+  padding: 6px 0;
+  border-bottom: 1px solid #f0f0f0;
+  font-size: 13px;
+  line-height: 1.5;
+}
+
+.popup-field:last-child {
+  border-bottom: none;
+}
+
+.popup-field strong {
+  color: #005b96;
+  font-weight: 600;
+  min-width: 80px;
+  display: inline-block;
+}
+
+/* Sección principal (siempre visible) */
+.popup-primary {
+  margin-bottom: 12px;
+}
+
+/* Sección de detalles (colapsable) */
+.popup-details {
+  margin-top: 8px;
+  margin-bottom: 12px;
+  padding-top: 12px;
+  border-top: 2px solid #e0e0e0;
+  transition: all 0.3s ease;
+}
+
+/* Botón de toggle (Más Información) */
+.popup-toggle-btn {
+  width: 100%;
+  padding: 10px;
+  background: linear-gradient(135deg, #005b96 0%, #0077cc 100%);
+  color: white;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 13px;
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  transition: all 0.2s ease;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.popup-toggle-btn:hover {
+  background: linear-gradient(135deg, #004780 0%, #0066b3 100%);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+  transform: translateY(-1px);
+}
+
+.popup-toggle-btn:active {
+  transform: translateY(0);
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+#popup-toggle-icon {
+  font-size: 11px;
+  transition: transform 0.3s ease;
 }
