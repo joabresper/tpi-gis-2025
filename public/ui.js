@@ -1,5 +1,5 @@
 export function generar_lista_capas(capas) {
-  const contenedor = document.querySelector('.layers-panel ul');
+  const contenedor = document.querySelector('#layers-list') || document.querySelector('.layers-panel ul');
 
   contenedor.innerHTML = ''; // limpia la lista
 

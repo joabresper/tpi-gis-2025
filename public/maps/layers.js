@@ -17,7 +17,7 @@ export const capas = {
     title: 'Capa Usuario',
     visible: false,
     type: 'PUNTO',
-    zIndex: Z_INDEX_BASE[self.type],
+    zIndex: Z_INDEX_BASE.PUNTO,
     style: new ol.style.Style({
       image: new ol.style.Circle({
         radius: 6,
@@ -50,7 +50,7 @@ export const capas = {
     title: 'Actividades Agropecuarias',
     visible: false,
     type: 'PUNTO',
-    zIndex: Z_INDEX_BASE[self.type],
+    zIndex: Z_INDEX_BASE.PUNTO,
     source: new ol.source.TileWMS({
       url: gs.url,
       params: { LAYERS: `${gs.workspace}:actividades_agropecuarias` }
@@ -61,7 +61,7 @@ export const capas = {
     title: 'Actividades Económicas',
     visible: false,
     type: 'PUNTO',
-    zIndex: Z_INDEX_BASE[self.type],
+    zIndex: Z_INDEX_BASE.PUNTO,
     source: new ol.source.TileWMS({
       url: gs.url,
       params: { LAYERS: `${gs.workspace}:actividades_economicas` }
@@ -72,7 +72,7 @@ export const capas = {
     title: 'Complejos de Energía',
     visible: false,
     type: 'PUNTO',
-    zIndex: Z_INDEX_BASE[self.type],
+    zIndex: Z_INDEX_BASE.PUNTO,
     source: new ol.source.TileWMS({
       url: gs.url,
       params: { LAYERS: `${gs.workspace}:complejo_de_energia_ene` }
@@ -83,7 +83,7 @@ export const capas = {
     title: 'Cultivos',
     visible: false,
     type: 'POLIGONO',
-    zIndex: Z_INDEX_BASE[self.type],
+    zIndex: Z_INDEX_BASE.POLIGONO,
     source: new ol.source.TileWMS({
       url: gs.url,
       params: { LAYERS: `${gs.workspace}:veg_cultivos` }
@@ -94,7 +94,7 @@ export const capas = {
     title: 'Cursos de Agua',
     visible: false,
     type: 'LINEA',
-    zIndex: Z_INDEX_BASE[self.type],
+    zIndex: Z_INDEX_BASE.LINEA,
     source: new ol.source.TileWMS({
       url: gs.url,
       params: { LAYERS: `${gs.workspace}:curso_de_agua_hid` }
@@ -105,7 +105,7 @@ export const capas = {
     title: 'Curvas de Nivel',
     visible: false,
     type: 'LINEA',
-    zIndex: Z_INDEX_BASE[self.type],
+    zIndex: Z_INDEX_BASE.LINEA,
     source: new ol.source.TileWMS({
       url: gs.url,
       params: { LAYERS: `${gs.workspace}:curvas_de_nivel` }
@@ -116,7 +116,7 @@ export const capas = {
     title: 'Edificios de Educación',
     visible: false,
     type: 'PUNTO',
-    zIndex: Z_INDEX_BASE[self.type],
+    zIndex: Z_INDEX_BASE.PUNTO,
     source: new ol.source.TileWMS({
       url: gs.url,
       params: { LAYERS: `${gs.workspace}:edif_educacion` }
@@ -127,7 +127,7 @@ export const capas = {
     title: 'Edificios de Salud (IPS)',
     visible: false,
     type: 'PUNTO',
-    zIndex: Z_INDEX_BASE[self.type],
+    zIndex: Z_INDEX_BASE.PUNTO,
     source: new ol.source.TileWMS({
       url: gs.url,
       params: { LAYERS: `${gs.workspace}:edificio_de_salud_ips` }
@@ -138,7 +138,7 @@ export const capas = {
     title: 'Edificios de Seguridad (IPS)',
     visible: false,
     type: 'PUNTO',
-    zIndex: Z_INDEX_BASE[self.type],
+    zIndex: Z_INDEX_BASE.PUNTO,
     source: new ol.source.TileWMS({
       url: gs.url,
       params: { LAYERS: `${gs.workspace}:edificio_de_seguridad_ips` }
@@ -149,7 +149,7 @@ export const capas = {
     title: 'Edificios Deportivos y Esparcimiento',
     visible: false,
     type: 'PUNTO',
-    zIndex: Z_INDEX_BASE[self.type],
+    zIndex: Z_INDEX_BASE.PUNTO,
     source: new ol.source.TileWMS({
       url: gs.url,
       params: { LAYERS: `${gs.workspace}:edif_depor_y_esparcimiento` }
@@ -160,7 +160,7 @@ export const capas = {
     title: 'Edificios Ferroviarios',
     visible: false,
     type: 'PUNTO',
-    zIndex: Z_INDEX_BASE[self.type],
+    zIndex: Z_INDEX_BASE.PUNTO,
     source: new ol.source.TileWMS({
       url: gs.url,
       params: { LAYERS: `${gs.workspace}:edificios_ferroviarios` }
@@ -171,7 +171,7 @@ export const capas = {
     title: 'Edificios Públicos (IPS)',
     visible: false,
     type: 'PUNTO',
-    zIndex: Z_INDEX_BASE[self.type],
+    zIndex: Z_INDEX_BASE.PUNTO,
     source: new ol.source.TileWMS({
       url: gs.url,
       params: { LAYERS: `${gs.workspace}:edificio_publico_ips` }
@@ -182,7 +182,7 @@ export const capas = {
     title: 'Edificios Religiosos',
     visible: false,
     type: 'PUNTO',
-    zIndex: Z_INDEX_BASE[self.type],
+    zIndex: Z_INDEX_BASE.PUNTO,
     source: new ol.source.TileWMS({
       url: gs.url,
       params: { LAYERS: `${gs.workspace}:edif_religiosos` }
@@ -193,7 +193,7 @@ export const capas = {
     title: 'Edificios/Construcciones Turísticas',
     visible: false,
     type: 'PUNTO',
-    zIndex: Z_INDEX_BASE[self.type],
+    zIndex: Z_INDEX_BASE.PUNTO,
     source: new ol.source.TileWMS({
       url: gs.url,
       params: { LAYERS: `${gs.workspace}:edif_construcciones_turisticas` }
@@ -204,7 +204,7 @@ export const capas = {
     title: 'Ejido',
     visible: false,
     type: 'POLIGONO',
-    zIndex: Z_INDEX_BASE[self.type],
+    zIndex: Z_INDEX_BASE.POLIGONO,
     source: new ol.source.TileWMS({
       url: gs.url,
       params: { LAYERS: `${gs.workspace}:ejido` }
@@ -215,7 +215,7 @@ export const capas = {
     title: 'Espejos de Agua',
     visible: false,
     type: 'POLIGONO',
-    zIndex: Z_INDEX_BASE[self.type],
+    zIndex: Z_INDEX_BASE.POLIGONO,
     source: new ol.source.TileWMS({
       url: gs.url,
       params: { LAYERS: `${gs.workspace}:espejo_de_agua_hid` }
@@ -226,7 +226,7 @@ export const capas = {
     title: 'Estructuras Portuarias',
     visible: false,
     type: 'PUNTO',
-    zIndex: Z_INDEX_BASE[self.type],
+    zIndex: Z_INDEX_BASE.PUNTO,
     source: new ol.source.TileWMS({
       url: gs.url,
       params: { LAYERS: `${gs.workspace}:estructuras_portuarias` }
@@ -237,7 +237,7 @@ export const capas = {
     title: 'Infraestructura Aeroportuaria',
     visible: false,
     type: 'PUNTO',
-    zIndex: Z_INDEX_BASE[self.type],
+    zIndex: Z_INDEX_BASE.PUNTO,
     source: new ol.source.TileWMS({
       url: gs.url,
       params: { LAYERS: `${gs.workspace}:infraestructura_aeroportuaria_punto` }
@@ -248,7 +248,7 @@ export const capas = {
     title: 'Infraestructura Hidrológica',
     visible: false,
     type: 'PUNTO',
-    zIndex: Z_INDEX_BASE[self.type],
+    zIndex: Z_INDEX_BASE.PUNTO,
     source: new ol.source.TileWMS({
       url: gs.url,
       params: { LAYERS: `${gs.workspace}:infraestructura_hidro` }
@@ -259,7 +259,7 @@ export const capas = {
     title: 'Islas',
     visible: false,
     type: 'POLIGONO',
-    zIndex: Z_INDEX_BASE[self.type],
+    zIndex: Z_INDEX_BASE.POLIGONO,
     source: new ol.source.TileWMS({
       url: gs.url,
       params: { LAYERS: `${gs.workspace}:isla` }
@@ -270,7 +270,7 @@ export const capas = {
     title: 'Límites del País',
     visible: false,
     type: 'BASE',
-    zIndex: Z_INDEX_BASE[self.type],
+    zIndex: Z_INDEX_BASE.BASE,
     source: new ol.source.TileWMS({
       url: gs.url,
       params: { LAYERS: `${gs.workspace}:pais_lim` }
@@ -281,7 +281,7 @@ export const capas = {
     title: 'Límites Político-Administrativos',
     visible: false,
     type: 'LINEA',
-    zIndex: Z_INDEX_BASE[self.type],
+    zIndex: Z_INDEX_BASE.LINEA,
     source: new ol.source.TileWMS({
       url: gs.url,
       params: { LAYERS: `${gs.workspace}:limite_politico_administrativo_lim` }
@@ -292,7 +292,7 @@ export const capas = {
     title: 'Líneas de Conducción Energética',
     visible: false,
     type: 'LINEA',
-    zIndex: Z_INDEX_BASE[self.type],
+    zIndex: Z_INDEX_BASE.LINEA,
     source: new ol.source.TileWMS({
       url: gs.url,
       params: { LAYERS: `${gs.workspace}:lineas_de_conduccion_ene` }
@@ -303,7 +303,7 @@ export const capas = {
     title: 'Localidades',
     visible: false,
     type: 'PUNTO',
-    zIndex: Z_INDEX_BASE[self.type],
+    zIndex: Z_INDEX_BASE.PUNTO,
     source: new ol.source.TileWMS({
       url: gs.url,
       params: { LAYERS: `${gs.workspace}:localidades` }
@@ -314,7 +314,7 @@ export const capas = {
     title: 'Marcas y Señales',
     visible: false,
     type: 'PUNTO',
-    zIndex: Z_INDEX_BASE[self.type],
+    zIndex: Z_INDEX_BASE.PUNTO,
     source: new ol.source.TileWMS({
       url: gs.url,
       params: { LAYERS: `${gs.workspace}:marcas_y_senales` }
@@ -325,7 +325,7 @@ export const capas = {
     title: 'Muros y Embalses',
     visible: false,
     type: 'LINEA',
-    zIndex: Z_INDEX_BASE[self.type],
+    zIndex: Z_INDEX_BASE.LINEA,
     source: new ol.source.TileWMS({
       url: gs.url,
       params: { LAYERS: `${gs.workspace}:muro_embalse` }
@@ -336,7 +336,7 @@ export const capas = {
     title: 'Obra de Comunicación',
     visible: false,
     type: 'PUNTO',
-    zIndex: Z_INDEX_BASE[self.type],
+    zIndex: Z_INDEX_BASE.PUNTO,
     source: new ol.source.TileWMS({
       url: gs.url,
       params: { LAYERS: `${gs.workspace}:obra_de_comunicación` }
@@ -347,7 +347,7 @@ export const capas = {
     title: 'Obra Portuaria',
     visible: false,
     type: 'PUNTO',
-    zIndex: Z_INDEX_BASE[self.type],
+    zIndex: Z_INDEX_BASE.PUNTO,
     source: new ol.source.TileWMS({
       url: gs.url,
       params: { LAYERS: `${gs.workspace}:obra_portuaria` }
@@ -358,7 +358,7 @@ export const capas = {
     title: 'Otras Edificaciones',
     visible: false,
     type: 'PUNTO',
-    zIndex: Z_INDEX_BASE[self.type],
+    zIndex: Z_INDEX_BASE.PUNTO,
     source: new ol.source.TileWMS({
       url: gs.url,
       params: { LAYERS: `${gs.workspace}:otras_edificaciones` }
@@ -380,7 +380,7 @@ export const capas = {
     title: 'Puentes Red Vial',
     visible: false,
     type: 'PUNTO',
-    zIndex: Z_INDEX_BASE[self.type],
+    zIndex: Z_INDEX_BASE.PUNTO,
     source: new ol.source.TileWMS({
       url: gs.url,
       params: { LAYERS: `${gs.workspace}:puente_red_vial_puntos` }
@@ -391,7 +391,7 @@ export const capas = {
     title: 'Puntos de Alturas Topográficas',
     visible: false,
     type: 'PUNTO',
-    zIndex: Z_INDEX_BASE[self.type],
+    zIndex: Z_INDEX_BASE.PUNTO,
     source: new ol.source.TileWMS({
       url: gs.url,
       params: { LAYERS: `${gs.workspace}:puntos_de_alturas_topograficas` }
@@ -402,7 +402,7 @@ export const capas = {
     title: 'Puntos del Terreno',
     visible: false,
     type: 'PUNTO',
-    zIndex: Z_INDEX_BASE[self.type],
+    zIndex: Z_INDEX_BASE.PUNTO,
     source: new ol.source.TileWMS({
       url: gs.url,
       params: { LAYERS: `${gs.workspace}:puntos_del_terreno` }
@@ -413,7 +413,7 @@ export const capas = {
     title: 'Red Ferroviaria',
     visible: false,
     type: 'LINEA',
-    zIndex: Z_INDEX_BASE[self.type],
+    zIndex: Z_INDEX_BASE.LINEA,
     source: new ol.source.TileWMS({
       url: gs.url,
       params: { LAYERS: `${gs.workspace}:red_ferroviaria` }
@@ -424,7 +424,7 @@ export const capas = {
     title: 'Red Vial',
     visible: false,
     type: 'LINEA',
-    zIndex: Z_INDEX_BASE[self.type],
+    zIndex: Z_INDEX_BASE.LINEA,
     source: new ol.source.TileWMS({
       url: gs.url,
       params: { LAYERS: `${gs.workspace}:red_vial` }
@@ -435,7 +435,7 @@ export const capas = {
     title: 'Salvado de Obstáculo',
     visible: false,
     type: 'PUNTO',
-    zIndex: Z_INDEX_BASE[self.type],
+    zIndex: Z_INDEX_BASE.PUNTO,
     source: new ol.source.TileWMS({
       url: gs.url,
       params: { LAYERS: `${gs.workspace}:salvado_de_obstaculo` }
@@ -446,7 +446,7 @@ export const capas = {
     title: 'Señalizaciones',
     visible: false,
     type: 'PUNTO',
-    zIndex: Z_INDEX_BASE[self.type],
+    zIndex: Z_INDEX_BASE.PUNTO,
     source: new ol.source.TileWMS({
       url: gs.url,
       params: { LAYERS: `${gs.workspace}:senalizaciones` }
@@ -457,7 +457,7 @@ export const capas = {
     title: 'Suelo Congelado',
     visible: false,
     type: 'POLIGONO',
-    zIndex: Z_INDEX_BASE[self.type],
+    zIndex: Z_INDEX_BASE.POLIGONO,
     source: new ol.source.TileWMS({
       url: gs.url,
       params: { LAYERS: `${gs.workspace}:sue_congelado` }
@@ -468,7 +468,7 @@ export const capas = {
     title: 'Suelo Consolidado',
     visible: false,
     type: 'POLIGONO',
-    zIndex: Z_INDEX_BASE[self.type],
+    zIndex: Z_INDEX_BASE.POLIGONO,
     source: new ol.source.TileWMS({
       url: gs.url,
       params: { LAYERS: `${gs.workspace}:sue_consolidado` }
@@ -479,7 +479,7 @@ export const capas = {
     title: 'Suelo Costero',
     visible: false,
     type: 'POLIGONO',
-    zIndex: Z_INDEX_BASE[self.type],
+    zIndex: Z_INDEX_BASE.POLIGONO,
     source: new ol.source.TileWMS({
       url: gs.url,
       params: { LAYERS: `${gs.workspace}:sue_costero` }
@@ -490,7 +490,7 @@ export const capas = {
     title: 'Suelo Desnudo',
     visible: false,
     type: 'POLIGONO',
-    zIndex: Z_INDEX_BASE[self.type],
+    zIndex: Z_INDEX_BASE.POLIGONO,
     source: new ol.source.TileWMS({
       url: gs.url,
       params: { LAYERS: `${gs.workspace}:veg_suelo_desnudo` }
@@ -501,7 +501,7 @@ export const capas = {
     title: 'Suelo Hidromorfológico',
     visible: false,
     type: 'POLIGONO',
-    zIndex: Z_INDEX_BASE[self.type],
+    zIndex: Z_INDEX_BASE.POLIGONO,
     source: new ol.source.TileWMS({
       url: gs.url,
       params: { LAYERS: `${gs.workspace}:sue_hidromorfologico` }
@@ -512,7 +512,7 @@ export const capas = {
     title: 'Suelo No Consolidado',
     visible: false,
     type: 'POLIGONO',
-    zIndex: Z_INDEX_BASE[self.type],
+    zIndex: Z_INDEX_BASE.POLIGONO,
     source: new ol.source.TileWMS({
       url: gs.url,
       params: { LAYERS: `${gs.workspace}:sue_no_consolidado` }
@@ -523,7 +523,7 @@ export const capas = {
     title: 'Vegetación Arbórea',
     visible: false,
     type: 'POLIGONO',
-    zIndex: Z_INDEX_BASE[self.type],
+    zIndex: Z_INDEX_BASE.POLIGONO,
     source: new ol.source.TileWMS({
       url: gs.url,
       params: { LAYERS: `${gs.workspace}:veg_arborea` }
@@ -534,7 +534,7 @@ export const capas = {
     title: 'Vegetación Arbustiva',
     visible: false,
     type: 'POLIGONO',
-    zIndex: Z_INDEX_BASE[self.type],
+    zIndex: Z_INDEX_BASE.POLIGONO,
     source: new ol.source.TileWMS({
       url: gs.url,
       params: { LAYERS: `${gs.workspace}:veg_arbustiva` }
@@ -545,7 +545,7 @@ export const capas = {
     title: 'Vegetación Hidrófila',
     visible: false,
     type: 'POLIGONO',
-    zIndex: Z_INDEX_BASE[self.type],
+    zIndex: Z_INDEX_BASE.POLIGONO,
     source: new ol.source.TileWMS({
       url: gs.url,
       params: { LAYERS: `${gs.workspace}:veg_hidrofila` }
@@ -556,7 +556,7 @@ export const capas = {
     title: 'Vías Secundarias',
     visible: false,
     type: 'LINEA',
-    zIndex: Z_INDEX_BASE[self.type],
+    zIndex: Z_INDEX_BASE.LINEA,
     source: new ol.source.TileWMS({
       url: gs.url,
       params: { LAYERS: `${gs.workspace}:vias_secundarias` }
