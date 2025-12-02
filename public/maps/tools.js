@@ -457,11 +457,11 @@ window.togglePopupDetails = function () {
   if (details.style.display === 'none') {
     details.style.display = 'block';
     icon.textContent = '▲';
-    btn.innerHTML = `< span id = "popup-toggle-icon" >▲</span > Menos Información`;
+    btn.innerHTML = `<span id="popup-toggle-icon">▲</span> Menos Información`;
   } else {
     details.style.display = 'none';
     icon.textContent = '▼';
-    btn.innerHTML = `< span id = "popup-toggle-icon" >▼</span > Más Información`;
+    btn.innerHTML = `<span id="popup-toggle-icon">▼</span> Más Información`;
   }
 }
 
