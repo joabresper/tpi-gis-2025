@@ -408,6 +408,71 @@ body {
   box-shadow: 0 4px 16px rgba(0, 0, 0, 0.12);
 }
 
+.legend-box {
+  position: absolute;
+  top: 15px;
+  right: 10px;
+  
+  width: max-content; /* El ancho será igual a lo que mida la imagen */
+  min-width: 200px;   /* Pero nunca menos de 200px */
+  max-width: 400px;   /* Si la imagen es GIGANTE, paramos aquí */
+  
+  overflow-x: auto;   
+  
+  background-color: white;
+  border: 2px solid #ccc;
+  border-radius: 5px;
+  padding: 10px;
+  z-index: 1000;
+  max-height: calc(100% - 100px);
+  box-shadow: 0 4px 6px rgba(0,0,0,0.3);
+}
+
+.legend-content img {
+    display: block;
+    max-width: none; /* Importante para que no se achique si es larga */
+}
+
+.legend-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-bottom: 1px solid #eee;
+    padding-bottom: 5px;
+    margin-bottom: 5px;
+    font-weight: bold;
+}
+
+.close-btn {
+    background: none;
+    border: none;
+    cursor: pointer;
+    font-weight: bold;
+    color: #666;
+}
+
+.close-btn:hover {
+    color: red;
+}
+
+.btn-ver-leyenda {
+    display: block;           /* Para que salte a la línea de abajo */
+    margin-top: 5px;
+    margin-left: 25px;        /* Identación para que quede bajo el texto, no bajo el checkbox */
+    font-size: 0.8rem;
+    background-color: #f0f0f0;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    padding: 2px 8px;
+    cursor: pointer;
+    color: #333;
+    transition: background 0.2s;
+}
+
+.btn-ver-leyenda:hover {
+    background-color: #e0e0e0;
+    border-color: #999;
+}
 /* ======= POPUPS DE INFORMACIÓN ======= */
 .info-popup {
   background: var(--white);
@@ -638,4 +703,53 @@ body {
     opacity: 1;
     transform: translateX(-50%) translateY(0);
   }
+.modal-dialog {
+  border: none;
+  border-radius: 8px;
+  box-shadow: 0 4px 15px rgba(0,0,0,0.3);
+  padding: 20px;
+  width: 300px;
+  top: 30%; /* Posición vertical */
+}
+
+/* Fondo oscuro detrás del modal */
+.modal-dialog::backdrop {
+  background: rgba(0, 0, 0, 0.5);
+}
+
+.modal-dialog h3 {
+  margin-top: 0;
+  color: #333;
+}
+
+.modal-dialog input {
+  width: 100%;
+  padding: 8px;
+  margin: 10px 0 20px 0;
+  box-sizing: border-box; /* Para que el padding no rompa el ancho */
+  border: 1px solid #ccc;
+  border-radius: 4px;
+}
+
+.modal-buttons {
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+}
+
+.modal-buttons button {
+  padding: 8px 15px;
+  cursor: pointer;
+  border: none;
+  border-radius: 4px;
+}
+
+#btn-confirmar-modal {
+  background-color: #4CAF50;
+  color: white;
+}
+
+#btn-cancelar-modal {
+  background-color: #f44336;
+  color: white;
 }

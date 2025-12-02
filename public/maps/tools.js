@@ -1,5 +1,9 @@
 import { base_map } from './maps.js';
 import gs from '../gsconfig.js';
+import { capas } from './layers.js';
+import { enviarTransaccionWFS } from './services.js';
+import { activar_desactivar_capa } from './functions.js';
+import { pedirNombrePunto } from '../ui.js';
 
 // =========================
 // CAPA Y LÓGICA DE MEDICIÓN
@@ -590,54 +594,50 @@ export function activarConsultaRectangulo() {
 // ===============================
 // ALTA DE NUEVOS ELEMENTOS
 // ===============================
-
-const editLayer = new ol.layer.Vector({
-  source: new ol.source.Vector(),
-  style: new ol.style.Style({
-    image: new ol.style.Circle({
-      radius: 6,
-      fill: new ol.style.Fill({ color: 'rgba(0, 153, 255, 0.6)' }),
-      stroke: new ol.style.Stroke({ color: '#003366', width: 2 })
-    }),
-    stroke: new ol.style.Stroke({
-      color: 'rgba(0, 153, 255, 0.8)',
-      width: 2
-    }),
-    fill: new ol.style.Fill({
-      color: 'rgba(0, 153, 255, 0.2)'
-    })
-  })
-});
-
-base_map.addLayer(editLayer);
-
-let editDrawInteraction = null;
+let drawInteraction = null;
 
 function limpiarEdicion() {
-  if (editDrawInteraction) {
-    base_map.removeInteraction(editDrawInteraction);
-    editDrawInteraction = null;
+  if (drawInteraction) {
+    base_map.removeInteraction(drawInteraction);
+    drawInteraction = null;
   }
 }
 
-export function activarAgregarElemento() {
+export function activarAgregarElemento(vectorSource, layer) {
   limpiarEdicion();
 
-  editDrawInteraction = new ol.interaction.Draw({
-    source: editLayer.getSource(),
+  drawInteraction = new ol.interaction.Draw({
+    source: vectorSource,
     type: 'Point'
   });
 
-  editDrawInteraction.on('drawend', evt => {
+  drawInteraction.on('drawend', async (evt) => {
     const feature = evt.feature;
-    const nombre = window.prompt('Ingrese el nombre del elemento:', '');
+    base_map.removeInteraction(drawInteraction);
+
+    const nombre = await pedirNombrePunto();
+
     if (nombre) {
       feature.set('nombre', nombre);
+      try {
+        // C. ENVIAR A GEOSERVER (La parte que faltaba)
+        console.log("Enviando a GeoServer...");
+        await enviarTransaccionWFS(feature, layer);
+        alert("✅ Punto guardado correctamente en la Base de Datos");
+        vectorSource.refresh();
+        
+      } catch (error) {
+        console.error("Error al guardar:", error);
+        alert("❌ Error: " + error.message);
+        // Si falló el guardado, borramos el punto del mapa para no confundir
+        vectorSource.removeFeature(feature);
+      }
+    } else {
+      vectorSource.removeFeature(feature);
     }
-    console.log('Nuevo feature agregado:', feature.getGeometry().getCoordinates(), feature.getProperties());
   });
 
-  base_map.addInteraction(editDrawInteraction);
+  base_map.addInteraction(drawInteraction);
 }
 
 // ===============================
@@ -733,7 +733,27 @@ export function inicializarHerramientas() {
   // Otras herramientas (mostrarBasura = false)
   const btnPoint = crearBoton('📍', 'Consulta por punto', activarConsultaPunto);
   const btnRect = crearBoton('▭', 'Consulta por rectángulo', activarConsultaRectangulo);
-  const btnAdd = crearBoton('+', 'Agregar elemento', activarAgregarElemento);
+  const btnAdd = crearBoton('+', 'Agregar elemento', () => {
+    const gsCapa = 'capa_usuario';
+
+    const appCapa = capas['gs_' + gsCapa];
+
+    if (!appCapa) {
+      console.error("No se encontró la capa a editar");
+      return;
+    }
+    const check = document.getElementById('gs_'+gsCapa);
+
+    if (!appCapa.getVisible()) {
+        appCapa.setVisible(true);
+        
+        if (check) {
+          check.checked = true;
+          check.dispatchEvent(new Event('change'));
+        }
+    }
+    activarAgregarElemento(appCapa.getSource(), gsCapa);
+  });
 
   container.appendChild(btnBurger);
   container.appendChild(btnMeasure);

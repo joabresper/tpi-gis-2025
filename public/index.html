@@ -36,6 +36,17 @@
         <ul id="layers-list">
           <!-- Las capas se cargan desde main.js -->
         </ul>
+      <!-- Área del mapa -->
+      <section class="map-area">
+        <div id="map"></div>
+
+        <div id="legend-container" class="legend-box" style="display: none;">
+          <div class="legend-header">
+            <span style="margin-right: 5px;" id="legend-title">Leyenda</span>
+            <button onclick="cerrarLeyenda()">X</button>
+          </div>
+          <img id="legend-image" src="" alt="Leyenda">
+        </div>
       </section>
     </aside>
 
@@ -61,4 +72,24 @@
 
 </body>
 
+    <!-- Scripts principales -->
+    <script type="module" src="./main.js"></script>
+    
+    <div id="popup-central" class="popup-central"></div>
+
+    <dialog id="modal-nombre" class="modal-dialog">
+      <form method="dialog">
+        <h3>Nuevo Punto</h3>
+        <p>Ingresa el nombre del elemento:</p>
+        
+        <input type="text" id="input-nombre-punto" autocomplete="off" />
+        
+        <div class="modal-buttons">
+          <button value="cancel" id="btn-cancelar-modal">Cancelar (Esc)</button>
+          <button value="confirm" id="btn-confirmar-modal" type="submit">Guardar (Enter)</button>
+        </div>
+      </form>
+    </dialog>
+
+  </body>
 </html>
