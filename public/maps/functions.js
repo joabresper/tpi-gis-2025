@@ -111,17 +111,25 @@ export function mostrarLeyenda(layerKey, layerTitle) {
     const img = document.getElementById('legend-image');
     const title = document.getElementById('legend-title');
     
-    const layerObj = capas[layerKey]; 
+    const layerObj = capas[layerKey];
+    let layerName = ''
     
     if (!layerObj) return;
 
     // Extraemos el nombre de la capa de la fuente WMS
     // Esto saca "workspace:capa" de los params
-    const layerName = layerObj.getSource().getParams()['LAYERS'];
+    const source = layerObj.getSource();
+
+    if (typeof source.getParams == 'function') {
+        layerName = layerObj.getSource().getParams()['LAYERS'];
+    } else {
+        layerName = `${gs.workspace}:capa_usuario`;
+    }
+    
 
     // 3. CONSTRUIMOS LA URL DINÁMICA
     const legendUrl = `${gs.wms}?REQUEST=GetLegendGraphic` + 
-                      `&VERSION=1.0.0` +
+                      `&VERSION=1.1.0` +
                       `&FORMAT=image/png` +
                       `&WIDTH=20&HEIGHT=20` + 
                       `&LAYER=${layerName}` +

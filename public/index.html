@@ -52,5 +52,20 @@
     <script type="module" src="./main.js"></script>
     
     <div id="popup-central" class="popup-central"></div>
+
+    <dialog id="modal-nombre" class="modal-dialog">
+      <form method="dialog">
+        <h3>Nuevo Punto</h3>
+        <p>Ingresa el nombre del elemento:</p>
+        
+        <input type="text" id="input-nombre-punto" autocomplete="off" />
+        
+        <div class="modal-buttons">
+          <button value="cancel" id="btn-cancelar-modal">Cancelar (Esc)</button>
+          <button value="confirm" id="btn-confirmar-modal" type="submit">Guardar (Enter)</button>
+        </div>
+      </form>
+    </dialog>
+
   </body>
 </html>

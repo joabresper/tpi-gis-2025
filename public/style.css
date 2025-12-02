@@ -412,3 +412,54 @@ body {
 .popup-central strong {
   font-weight: 600;
 }
+
+.modal-dialog {
+  border: none;
+  border-radius: 8px;
+  box-shadow: 0 4px 15px rgba(0,0,0,0.3);
+  padding: 20px;
+  width: 300px;
+  top: 30%; /* Posición vertical */
+}
+
+/* Fondo oscuro detrás del modal */
+.modal-dialog::backdrop {
+  background: rgba(0, 0, 0, 0.5);
+}
+
+.modal-dialog h3 {
+  margin-top: 0;
+  color: #333;
+}
+
+.modal-dialog input {
+  width: 100%;
+  padding: 8px;
+  margin: 10px 0 20px 0;
+  box-sizing: border-box; /* Para que el padding no rompa el ancho */
+  border: 1px solid #ccc;
+  border-radius: 4px;
+}
+
+.modal-buttons {
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+}
+
+.modal-buttons button {
+  padding: 8px 15px;
+  cursor: pointer;
+  border: none;
+  border-radius: 4px;
+}
+
+#btn-confirmar-modal {
+  background-color: #4CAF50;
+  color: white;
+}
+
+#btn-cancelar-modal {
+  background-color: #f44336;
+  color: white;
+}

@@ -13,6 +13,39 @@ export const base_layer = new ol.layer.Tile({
 });
 
 export const capas = {
+  gs_capa_usuario: new ol.layer.Vector({
+    title: 'Capa Usuario',
+    visible: false,
+    type: 'PUNTO',
+    zIndex: Z_INDEX_BASE[self.type],
+    style: new ol.style.Style({
+      image: new ol.style.Circle({
+        radius: 6,
+        fill: new ol.style.Fill({ color: 'rgba(0, 153, 255, 0.6)' }),
+        stroke: new ol.style.Stroke({ color: '#003366', width: 2 })
+      }),
+      stroke: new ol.style.Stroke({
+        color: 'rgba(0, 153, 255, 0.8)',
+        width: 2
+      }),
+      fill: new ol.style.Fill({
+        color: 'rgba(0, 153, 255, 0.2)'
+      })
+    }),
+    source: new ol.source.Vector({
+      format: new ol.format.GeoJSON(),
+      url: function (extent) {
+        return `${gs.wfs}?service=WFS&` +
+               'version=1.0.0&request=GetFeature&' +
+               `typename=${gs.workspace}:capa_usuario&` +
+               'outputFormat=application/json&' +
+               `srsname=${gs.srsName}&` +
+               'bbox=' + extent.join(',') + `,${gs.srsName}`;
+      },
+      strategy: ol.loadingstrategy.bbox
+    })
+  }),
+
   gs_actividades_agropecuarias: new ol.layer.Tile({
     title: 'Actividades Agropecuarias',
     visible: false,
