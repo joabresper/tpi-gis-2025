@@ -352,9 +352,12 @@ function mostrarResultadoPopup(features) {
     .map(([k, v]) => `<div class="popup-field"><strong>${k}:</strong> ${v}</div>`)
     .join('');
 
-  // HTML completo con sección colapsable
+  // HTML completo con barra de título arrastrable
   popup.innerHTML = `
-    <button class="popup-close-btn" onclick="document.getElementById('popup-central').style.display='none'">✕</button>
+    <div class="popup-header" id="popup-header">
+      <span class="popup-title">📍 Información del Elemento</span>
+      <button class="popup-close-btn" onclick="document.getElementById('popup-central').style.display='none'">✕</button>
+    </div>
     <div class="popup-content">
       <div class="popup-primary">
         ${primaryHtml}
@@ -370,7 +373,77 @@ function mostrarResultadoPopup(features) {
     </div>
   `;
 
+  // Resetear posición al centro
+  popup.style.left = '50%';
+  popup.style.top = '50%';
+  popup.style.transform = 'translate(-50%, -50%)';
   popup.style.display = 'block';
+
+  // Configurar drag and drop
+  makeDraggable(popup);
+}
+
+// Función para hacer el popup arrastrable
+function makeDraggable(element) {
+  const header = element.querySelector('#popup-header');
+
+  let pos1 = 0, pos2 = 0, pos3 = 0, pos4 = 0;
+  let isDragging = false;
+
+  header.onmousedown = dragMouseDown;
+
+  function dragMouseDown(e) {
+    e.preventDefault();
+    isDragging = true;
+
+    // Cambiar a posicionamiento absoluto durante el arrastre
+    const rect = element.getBoundingClientRect();
+    element.style.left = rect.left + 'px';
+    element.style.top = rect.top + 'px';
+    element.style.transform = 'none';
+
+    pos3 = e.clientX;
+    pos4 = e.clientY;
+
+    document.onmouseup = closeDragElement;
+    document.onmousemove = elementDrag;
+
+    // Cambiar cursor
+    header.style.cursor = 'grabbing';
+  }
+
+  function elementDrag(e) {
+    if (!isDragging) return;
+
+    e.preventDefault();
+
+    // Calcular nueva posición
+    pos1 = pos3 - e.clientX;
+    pos2 = pos4 - e.clientY;
+    pos3 = e.clientX;
+    pos4 = e.clientY;
+
+    // Calcular nueva posición del elemento
+    let newTop = element.offsetTop - pos2;
+    let newLeft = element.offsetLeft - pos1;
+
+    // Limitar a los bordes de la ventana
+    const maxX = window.innerWidth - element.offsetWidth;
+    const maxY = window.innerHeight - element.offsetHeight;
+
+    newLeft = Math.max(0, Math.min(newLeft, maxX));
+    newTop = Math.max(0, Math.min(newTop, maxY));
+
+    element.style.top = newTop + 'px';
+    element.style.left = newLeft + 'px';
+  }
+
+  function closeDragElement() {
+    isDragging = false;
+    document.onmouseup = null;
+    document.onmousemove = null;
+    header.style.cursor = 'grab';
+  }
 }
 
 // Función global para alternar la visibilidad de los detalles
