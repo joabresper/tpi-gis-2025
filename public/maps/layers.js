@@ -3,13 +3,7 @@ import { Z_INDEX_BASE } from "../const.js";
 
 export const base_layer = new ol.layer.Tile({
   title: 'Base Layer',
-  source: new ol.source.TileWMS({
-    url: 'https://wms.ign.gob.ar/geoserver/ows',
-    params: {
-      'LAYERS': 'ign:provincia',
-      'TILED': true
-    }
-  })
+  source: new ol.source.OSM()
 });
 
 export const capas = {
