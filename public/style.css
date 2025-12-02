@@ -354,8 +354,9 @@ body {
 }
 
 .ol-tooltip-static {
-  background-color: #ffcc33;
-  color: black;
+  background-color: #315480;
+  color: #fff;
+  font-weight: bold;
   border: 1px solid white;
 }
 

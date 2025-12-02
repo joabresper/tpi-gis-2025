@@ -9,9 +9,9 @@ const measureLayer = new ol.layer.Vector({
   source: new ol.source.Vector(),
   style: new ol.style.Style({
     stroke: new ol.style.Stroke({
-      color: 'rgba(0, 0, 0, 0.5)',
-      lineDash: [10, 10],
-      width: 2
+      color: 'rgba(4, 40, 91, 0.5)',
+      //lineDash: [10, 10],
+      width: 2.5
     }),
     image: new ol.style.Circle({
       radius: 5,
@@ -74,10 +74,12 @@ export function activarMedirDistancia() {
 
   let sketch;
 
+  //mostrar resultado de las mediciones
   function actualizarMedida(geometry) {
     if (!measureTooltip || !geometry) return;
 
     const length = ol.sphere.getLength(geometry, { projection: 'EPSG:4326' });
+    //motrar en km o metros
     const output = length > 1000
       ? (length / 1000).toFixed(2) + ' km'
       : length.toFixed(2) + ' m';
@@ -455,11 +457,11 @@ window.togglePopupDetails = function () {
   if (details.style.display === 'none') {
     details.style.display = 'block';
     icon.textContent = '▲';
-    btn.innerHTML = `<span id="popup-toggle-icon">▲</span> Menos Información`;
+    btn.innerHTML = `< span id = "popup-toggle-icon" >▲</span > Menos Información`;
   } else {
     details.style.display = 'none';
     icon.textContent = '▼';
-    btn.innerHTML = `<span id="popup-toggle-icon">▼</span> Más Información`;
+    btn.innerHTML = `< span id = "popup-toggle-icon" >▼</span > Más Información`;
   }
 }
 
