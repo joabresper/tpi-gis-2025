@@ -481,18 +481,39 @@ function obtenerCapaYTablaActiva() {
   return { layer, layerTable };
 }
 
+// Función para mostrar alerta de no hay capa activa
+function mostrarAlertaNoCapaActiva() {
+  const alert = document.getElementById('alert-no-layer');
+  if (alert) {
+    alert.classList.add('show');
+    // Ocultar después de 3 segundos
+    setTimeout(() => {
+      alert.classList.remove('show');
+    }, 3000);
+  }
+}
+
 
 
 export function activarConsultaPunto() {
+  // Verificar si hay capas activas ANTES de limpiar
+  const capasVisibles = obtenerCapasWMSVisibles();
+  if (capasVisibles.length === 0) {
+    mostrarAlertaNoCapaActiva();
+    return; // Salir sin activar la herramienta
+  }
+
   limpiarConsulta();
 
   identifyClickKey = base_map.on('singleclick', async evt => {
-    const coordinate = evt.coordinate;  // el mapa está en EPSG:4326
+    const coordinate = evt.coordinate;
     const info = obtenerCapaYTablaActiva();
-    if (!info) return;
+    if (!info) {
+      mostrarAlertaNoCapaActiva();
+      return;
+    }
 
     const { layer, layerTable } = info;
-
     const lon = coordinate[0];
     const lat = coordinate[1];
 
@@ -504,14 +525,13 @@ export function activarConsultaPunto() {
           layerTable,
           lon,
           lat,
-          radius: 0.001 // aca se configura el radio al hacer la consulta por punto 0.001 = 111 metro
+          radius: 0.001
         })
       });
 
       const geojson = await resp.json();
       const features = geojson.features || [];
       mostrarResultadoPopup(features, coordinate);
-      // Si después querés highlight, acá podés llamar a una función similar a resaltarFeaturesFromGeoJSON
     } catch (err) {
       console.error('Error consulta punto BDD:', err);
     }
@@ -520,6 +540,13 @@ export function activarConsultaPunto() {
 
 
 export function activarConsultaRectangulo() {
+  // Verificar si hay capas activas ANTES de limpiar
+  const capasVisibles = obtenerCapasWMSVisibles();
+  if (capasVisibles.length === 0) {
+    mostrarAlertaNoCapaActiva();
+    return; // Salir sin activar la herramienta
+  }
+
   limpiarConsulta();
 
   dragBoxInteraction = new ol.interaction.DragBox();
@@ -527,10 +554,12 @@ export function activarConsultaRectangulo() {
 
   dragBoxInteraction.on('boxend', async () => {
     const info = obtenerCapaYTablaActiva();
-    if (!info) return;
+    if (!info) {
+      mostrarAlertaNoCapaActiva();
+      return;
+    }
 
     const { layer, layerTable } = info;
-
     const extent = dragBoxInteraction.getGeometry().getExtent();
     const [minx, miny, maxx, maxy] = extent;
     const center = ol.extent.getCenter(extent);
