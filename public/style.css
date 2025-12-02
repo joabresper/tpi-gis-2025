@@ -336,7 +336,7 @@ body {
   flex: 1;
 }
 
-/* Botón de cierre del popup - ahora en la barra de título */
+/* Botón de cierre del popup - Animación mejorada */
 .popup-close-btn {
   width: 24px;
   height: 24px;
@@ -350,14 +350,20 @@ body {
   display: flex;
   align-items: center;
   justify-content: center;
-  transition: all 0.2s ease;
+  transition: all 0.3s ease;
   padding: 0;
   flex-shrink: 0;
 }
 
 .popup-close-btn:hover {
   background-color: #ff4444;
-  transform: scale(1.1);
+  transform: scale(1.15) rotate(90deg);
+  box-shadow: 0 0 10px rgba(255, 68, 68, 0.5);
+}
+
+.popup-close-btn:active {
+  transform: scale(0.95) rotate(90deg);
+  transition: all 0.1s ease;
 }
 
 .popup-content {
