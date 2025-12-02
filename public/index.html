@@ -1,48 +1,58 @@
 <!DOCTYPE html>
 <html lang="es">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Visualizador GIS</title>
-    <link rel="icon" type="image/x-icon" href="https://openlayers.org/favicon.ico" />
 
-    <!-- OpenLayers -->
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/ol@latest/ol.css">
-    <script src="https://cdn.jsdelivr.net/npm/ol@latest/dist/ol.js"></script>
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Visualizador GIS</title>
+  <link rel="icon" type="image/x-icon" href="https://openlayers.org/favicon.ico" />
 
-    <!-- Estilos propios -->
-    <link rel="stylesheet" href="./style.css" />
-  </head>
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
 
-  <body>
-    <header class="header">
+  <!-- OpenLayers -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/ol@latest/ol.css">
+  <script src="https://cdn.jsdelivr.net/npm/ol@latest/dist/ol.js"></script>
+
+  <!-- Estilos propios -->
+  <link rel="stylesheet" href="./style.css" />
+</head>
+
+<body>
+  <header class="header">
+    <div class="header-content">
+      <span class="header-icon">🗺️</span>
       <h1>Visualizador GIS</h1>
-    </header>
+    </div>
+  </header>
 
-    <main class="container">
-      <!-- Panel lateral -->
-      <aside class="sidebar">
-        <section class="layers-panel">
-          <h2>Capas</h2>
-          <ul id="layers-list">
-            <!-- Las capas se cargan desde main.js -->
-          </ul>
-        </section>
-      </aside>
-
-      <button id="btn-centrar" title="Centrar Mapa a Vista Inicial" class="map-control-button">
-      🏠
-      </button>
-
-      <!-- Área del mapa -->
-      <section class="map-area">
-        <div id="map"></div>
+  <main class="container">
+    <!-- Panel lateral -->
+    <aside class="sidebar">
+      <section class="layers-panel">
+        <h2>Capas</h2>
+        <ul id="layers-list">
+          <!-- Las capas se cargan desde main.js -->
+        </ul>
       </section>
-    </main>
+    </aside>
 
-    <!-- Scripts principales -->
-    <script type="module" src="./main.js"></script>
-    
-    <div id="popup-central" class="popup-central"></div>
-  </body>
+    <button id="btn-centrar" title="Centrar Mapa a Vista Inicial" class="map-control-button">
+      🏠
+    </button>
+
+    <!-- Área del mapa -->
+    <section class="map-area">
+      <div id="map"></div>
+    </section>
+  </main>
+
+  <!-- Scripts principales -->
+  <script type="module" src="./main.js"></script>
+
+  <div id="popup-central" class="popup-central"></div>
+</body>
+
 </html>
