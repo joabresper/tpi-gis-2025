@@ -13,9 +13,9 @@ const measureLayer = new ol.layer.Vector({
   source: new ol.source.Vector(),
   style: new ol.style.Style({
     stroke: new ol.style.Stroke({
-      color: 'rgba(4, 40, 91, 0.5)',
-      //lineDash: [10, 10],
-      width: 2.5
+      color: 'rgba(0, 0, 0, 0.5)',
+      lineDash: [10, 10],
+      width: 2
     }),
     image: new ol.style.Circle({
       radius: 5,
@@ -78,12 +78,10 @@ export function activarMedirDistancia() {
 
   let sketch;
 
-  //mostrar resultado de las mediciones
   function actualizarMedida(geometry) {
     if (!measureTooltip || !geometry) return;
 
     const length = ol.sphere.getLength(geometry, { projection: 'EPSG:4326' });
-    //motrar en km o metros
     const output = length > 1000
       ? (length / 1000).toFixed(2) + ' km'
       : length.toFixed(2) + ' m';
@@ -300,6 +298,7 @@ function limpiarConsulta() {
     infoElement = null;
   }
   document.getElementById('popup-central').style.display = 'none';
+
 }
 
 function obtenerCapasWMSVisibles() {
@@ -334,139 +333,16 @@ function mostrarResultadoPopup(features) {
 
   const props = features[0].properties ?? features[0];
 
-  // Campos a ocultar completamente
+  // Campos a ocultar
   const HIDDEN_FIELDS = ['gid', 'geom', 'prov', 'prov_1', 'id', 'gid_1', 'igds_color', 'igds_level', 'igds_weigh', 'coord', 'group', 't_act', 'igds_type', 'signo'];
 
-  // Campos principales a mostrar inicialmente (ajusta según tus necesidades)
-  const PRIMARY_FIELDS = ['ac', 'sp', 'tipo', 'cargo', 'datum'];
-
-  // Filtrar todos los campos visibles
-  const allFields = Object.entries(props)
-    .filter(([k]) => !HIDDEN_FIELDS.includes(k));
-
-  // Separar en campos principales y detalles
-  const primaryFieldsData = allFields.filter(([k]) => PRIMARY_FIELDS.includes(k));
-  const detailFieldsData = allFields.filter(([k]) => !PRIMARY_FIELDS.includes(k));
-
-  // Generar HTML para campos principales
-  const primaryHtml = primaryFieldsData
-    .map(([k, v]) => `<div class="popup-field"><strong>${k}:</strong> ${v}</div>`)
+  const html = Object.entries(props)
+    .filter(([k]) => !HIDDEN_FIELDS.includes(k))
+    .map(([k, v]) => `<div><strong>${k}</strong>: ${v}</div>`)
     .join('');
 
-  // Generar HTML para campos de detalles
-  const detailHtml = detailFieldsData
-    .map(([k, v]) => `<div class="popup-field"><strong>${k}:</strong> ${v}</div>`)
-    .join('');
-
-  // HTML completo con barra de título arrastrable
-  popup.innerHTML = `
-    <div class="popup-header" id="popup-header">
-      <span class="popup-title">📍 Información del Elemento</span>
-      <button class="popup-close-btn" onclick="document.getElementById('popup-central').style.display='none'">✕</button>
-    </div>
-    <div class="popup-content">
-      <div class="popup-primary">
-        ${primaryHtml}
-      </div>
-      
-      <div id="popup-details" class="popup-details" style="display: none;">
-        ${detailHtml}
-      </div>
-      
-      <button id="popup-toggle-btn" class="popup-toggle-btn" onclick="togglePopupDetails()">
-        <span id="popup-toggle-icon">▼</span> Más Información
-      </button>
-    </div>
-  `;
-
-  // Resetear posición al centro
-  popup.style.left = '50%';
-  popup.style.top = '50%';
-  popup.style.transform = 'translate(-50%, -50%)';
+  popup.innerHTML = html;
   popup.style.display = 'block';
-
-  // Configurar drag and drop
-  makeDraggable(popup);
-}
-
-// Función para hacer el popup arrastrable
-function makeDraggable(element) {
-  const header = element.querySelector('#popup-header');
-
-  let pos1 = 0, pos2 = 0, pos3 = 0, pos4 = 0;
-  let isDragging = false;
-
-  header.onmousedown = dragMouseDown;
-
-  function dragMouseDown(e) {
-    e.preventDefault();
-    isDragging = true;
-
-    // Cambiar a posicionamiento absoluto durante el arrastre
-    const rect = element.getBoundingClientRect();
-    element.style.left = rect.left + 'px';
-    element.style.top = rect.top + 'px';
-    element.style.transform = 'none';
-
-    pos3 = e.clientX;
-    pos4 = e.clientY;
-
-    document.onmouseup = closeDragElement;
-    document.onmousemove = elementDrag;
-
-    // Cambiar cursor
-    header.style.cursor = 'grabbing';
-  }
-
-  function elementDrag(e) {
-    if (!isDragging) return;
-
-    e.preventDefault();
-
-    // Calcular nueva posición
-    pos1 = pos3 - e.clientX;
-    pos2 = pos4 - e.clientY;
-    pos3 = e.clientX;
-    pos4 = e.clientY;
-
-    // Calcular nueva posición del elemento
-    let newTop = element.offsetTop - pos2;
-    let newLeft = element.offsetLeft - pos1;
-
-    // Limitar a los bordes de la ventana
-    const maxX = window.innerWidth - element.offsetWidth;
-    const maxY = window.innerHeight - element.offsetHeight;
-
-    newLeft = Math.max(0, Math.min(newLeft, maxX));
-    newTop = Math.max(0, Math.min(newTop, maxY));
-
-    element.style.top = newTop + 'px';
-    element.style.left = newLeft + 'px';
-  }
-
-  function closeDragElement() {
-    isDragging = false;
-    document.onmouseup = null;
-    document.onmousemove = null;
-    header.style.cursor = 'grab';
-  }
-}
-
-// Función global para alternar la visibilidad de los detalles
-window.togglePopupDetails = function () {
-  const details = document.getElementById('popup-details');
-  const btn = document.getElementById('popup-toggle-btn');
-  const icon = document.getElementById('popup-toggle-icon');
-
-  if (details.style.display === 'none') {
-    details.style.display = 'block';
-    icon.textContent = '▲';
-    btn.innerHTML = `<span id="popup-toggle-icon">▲</span> Menos Información`;
-  } else {
-    details.style.display = 'none';
-    icon.textContent = '▼';
-    btn.innerHTML = `<span id="popup-toggle-icon">▼</span> Más Información`;
-  }
 }
 
 
@@ -485,39 +361,18 @@ function obtenerCapaYTablaActiva() {
   return { layer, layerTable };
 }
 
-// Función para mostrar alerta de no hay capa activa
-function mostrarAlertaNoCapaActiva() {
-  const alert = document.getElementById('alert-no-layer');
-  if (alert) {
-    alert.classList.add('show');
-    // Ocultar después de 3 segundos
-    setTimeout(() => {
-      alert.classList.remove('show');
-    }, 3000);
-  }
-}
-
 
 
 export function activarConsultaPunto() {
-  // Verificar si hay capas activas ANTES de limpiar
-  const capasVisibles = obtenerCapasWMSVisibles();
-  if (capasVisibles.length === 0) {
-    mostrarAlertaNoCapaActiva();
-    return; // Salir sin activar la herramienta
-  }
-
   limpiarConsulta();
 
   identifyClickKey = base_map.on('singleclick', async evt => {
-    const coordinate = evt.coordinate;
+    const coordinate = evt.coordinate;  // el mapa está en EPSG:4326
     const info = obtenerCapaYTablaActiva();
-    if (!info) {
-      mostrarAlertaNoCapaActiva();
-      return;
-    }
+    if (!info) return;
 
     const { layer, layerTable } = info;
+
     const lon = coordinate[0];
     const lat = coordinate[1];
 
@@ -529,13 +384,14 @@ export function activarConsultaPunto() {
           layerTable,
           lon,
           lat,
-          radius: 0.001
+          radius: 0.001 // aca se configura el radio al hacer la consulta por punto 0.001 = 111 metro
         })
       });
 
       const geojson = await resp.json();
       const features = geojson.features || [];
       mostrarResultadoPopup(features, coordinate);
+      // Si después querés highlight, acá podés llamar a una función similar a resaltarFeaturesFromGeoJSON
     } catch (err) {
       console.error('Error consulta punto BDD:', err);
     }
@@ -544,13 +400,6 @@ export function activarConsultaPunto() {
 
 
 export function activarConsultaRectangulo() {
-  // Verificar si hay capas activas ANTES de limpiar
-  const capasVisibles = obtenerCapasWMSVisibles();
-  if (capasVisibles.length === 0) {
-    mostrarAlertaNoCapaActiva();
-    return; // Salir sin activar la herramienta
-  }
-
   limpiarConsulta();
 
   dragBoxInteraction = new ol.interaction.DragBox();
@@ -558,12 +407,10 @@ export function activarConsultaRectangulo() {
 
   dragBoxInteraction.on('boxend', async () => {
     const info = obtenerCapaYTablaActiva();
-    if (!info) {
-      mostrarAlertaNoCapaActiva();
-      return;
-    }
+    if (!info) return;
 
     const { layer, layerTable } = info;
+
     const extent = dragBoxInteraction.getGeometry().getExtent();
     const [minx, miny, maxx, maxy] = extent;
     const center = ol.extent.getCenter(extent);
