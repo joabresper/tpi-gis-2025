@@ -808,7 +808,19 @@ export function inicializarHerramientas() {
     activarAgregarElemento(appCapa.getSource(), gsCapa);
   });
 
+  // Botón de Pan/Mover (Desactivar todo)
+  const btnPan = crearBoton('🖐️', 'Mover mapa', () => {
+    // Esta función ya se ejecuta al hacer click gracias a la lógica de crearBoton
+    // que llama a desactivarTodasLasHerramientas() antes de activar el botón.
+    // Al ser una herramienta "activa", mantendrá el botón presionado visualmente
+    // indicando que estamos en modo "mover".
+  });
+  // Por defecto, activamos el modo mover al inicio
+  btnPan.classList.add('active-tool');
+
+
   container.appendChild(btnBurger);
+  container.appendChild(btnPan);
   container.appendChild(btnMeasure);
   container.appendChild(btnMeasureArea);
   container.appendChild(btnPoint);
