@@ -496,9 +496,6 @@ function mostrarAlertaNoCapaActiva() {
     }, 3000);
   }
 }
-
-
-
 export function activarConsultaPunto() {
   // Verificar si hay capas activas ANTES de limpiar
   const capasVisibles = obtenerCapasWMSVisibles();
@@ -521,6 +518,17 @@ export function activarConsultaPunto() {
     const lon = coordinate[0];
     const lat = coordinate[1];
 
+    const view = base_map.getView();
+    const resolution = view.getResolution();      // grados por píxel (EPSG:4326)
+
+    const pixelTolerance = 5;                   
+    let radius = resolution * pixelTolerance;     // grados ≈ pixelTolerance píxeles
+
+    // Por seguridad, si algo raro pasa con la resolución, usamos un fallback
+    if (!radius || radius <= 0) {
+      radius = 0.02; 
+    }
+
     try {
       const resp = await fetch('/api/query/point', {
         method: 'POST',
@@ -529,7 +537,7 @@ export function activarConsultaPunto() {
           layerTable,
           lon,
           lat,
-          radius: 0.02
+          radius
         })
       });
 
@@ -541,7 +549,6 @@ export function activarConsultaPunto() {
     }
   });
 }
-
 
 export function activarConsultaRectangulo() {
   // Verificar si hay capas activas ANTES de limpiar
