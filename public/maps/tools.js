@@ -529,7 +529,7 @@ export function activarConsultaPunto() {
           layerTable,
           lon,
           lat,
-          radius: 0.001
+          radius: 0.02
         })
       });
 
