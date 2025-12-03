@@ -340,6 +340,10 @@ body {
   transform: scale(1.08);
 }
 
+.ol-custom-tool-btn:not(.active-tool):focus {
+  outline: none !important;
+}
+
 .ol-custom-tool-btn.active-tool:hover {
   transform: scale(1.12) translateY(-3px);
   box-shadow: 0 8px 24px rgba(0, 119, 204, 0.6);
