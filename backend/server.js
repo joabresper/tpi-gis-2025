@@ -81,7 +81,7 @@ app.post('/api/query/point', async (req, res) => {
 // ==============================
 app.post('/api/query/rect', async (req, res) => {
   try {
-    const { layerTable, minx, miny, maxx, maxy } = req.body;
+    const { layerTable, minx, miny, maxx, maxy, limit } = req.body;
 
     if (
       layerTable == null ||
@@ -92,6 +92,7 @@ app.post('/api/query/rect', async (req, res) => {
     }
 
     const table = getSafeTableName(layerTable);
+    const queryLimit = limit && limit > 0 ? parseInt(limit) : 50;
 
     const sql = `
       SELECT
@@ -102,10 +103,10 @@ app.post('/api/query/rect', async (req, res) => {
         t.geom,
         ST_MakeEnvelope($1, $2, $3, $4, 4326)
       )
-      LIMIT 200;
+      LIMIT $5;
     `;
 
-    const result = await runQuery(sql, [minx, miny, maxx, maxy]);
+    const result = await runQuery(sql, [minx, miny, maxx, maxy, queryLimit]);
 
     const features = result.rows.map(row => ({
       type: 'Feature',

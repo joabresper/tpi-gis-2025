@@ -268,6 +268,8 @@ let infoOverlay = null;
 let infoElement = null;
 let identifyClickKey = null;
 let dragBoxInteraction = null;
+let currentFeatures = [];
+let currentFeatureIndex = 0;
 
 function crearInfoOverlay() {
   if (!infoElement) {
@@ -300,6 +302,8 @@ function limpiarConsulta() {
     infoElement = null;
   }
   document.getElementById('popup-central').style.display = 'none';
+  currentFeatures = [];
+  currentFeatureIndex = 0;
 }
 
 function obtenerCapasWMSVisibles() {
@@ -332,13 +336,32 @@ function mostrarResultadoPopup(features) {
     return;
   }
 
-  const props = features[0].properties ?? features[0];
+  currentFeatures = features;
+  currentFeatureIndex = 0;
+
+  actualizarContenidoPopup(popup);
+
+  // Resetear posición al centro
+  popup.style.left = '50%';
+  popup.style.top = '50%';
+  popup.style.transform = 'translate(-50%, -50%)';
+  popup.style.display = 'block';
+
+  // Configurar drag and drop
+  makeDraggable(popup);
+}
+
+function actualizarContenidoPopup(popup) {
+  if (currentFeatures.length === 0) return;
+
+  const feature = currentFeatures[currentFeatureIndex];
+  const props = feature.properties ?? feature;
 
   // Campos a ocultar completamente
   const HIDDEN_FIELDS = ['gid', 'geom', 'prov', 'prov_1', 'id', 'gid_1', 'igds_color', 'igds_level', 'igds_weigh', 'coord', 'group', 't_act', 'igds_type', 'signo'];
 
-  // Campos principales a mostrar inicialmente (ajusta según tus necesidades)
-  const PRIMARY_FIELDS = ['ac', 'sp', 'tipo', 'cargo', 'datum'];
+  // Campos principales a mostrar inicialmente
+  const PRIMARY_FIELDS = ['ac', 'sp', 'tipo', 'cargo', 'datum', 'provincia'];
 
   // Filtrar todos los campos visibles
   const allFields = Object.entries(props)
@@ -358,13 +381,26 @@ function mostrarResultadoPopup(features) {
     .map(([k, v]) => `<div class="popup-field"><strong>${k}:</strong> ${v}</div>`)
     .join('');
 
-  // HTML completo con barra de título arrastrable
+  // Navegación
+  let navHtml = '';
+  if (currentFeatures.length > 1) {
+    navHtml = `
+      <div class="popup-nav">
+        <button onclick="prevFeature()" class="popup-prev-btn" ${currentFeatureIndex === 0 ? 'disabled' : ''}>&lt;</button>
+        <span>${currentFeatureIndex + 1} de ${currentFeatures.length}</span>
+        <button onclick="nextFeature()" class="popup-next-btn" ${currentFeatureIndex === currentFeatures.length - 1 ? 'disabled' : ''}>&gt;</button>
+      </div>
+    `;
+  }
+
+  // HTML completo
   popup.innerHTML = `
     <div class="popup-header" id="popup-header">
       <span class="popup-title">📍 Información del Elemento</span>
       <button class="popup-close-btn" onclick="document.getElementById('popup-central').style.display='none'">✕</button>
     </div>
     <div class="popup-content">
+      ${navHtml}
       <div class="popup-primary">
         ${primaryHtml}
       </div>
@@ -378,16 +414,22 @@ function mostrarResultadoPopup(features) {
       </button>
     </div>
   `;
-
-  // Resetear posición al centro
-  popup.style.left = '50%';
-  popup.style.top = '50%';
-  popup.style.transform = 'translate(-50%, -50%)';
-  popup.style.display = 'block';
-
-  // Configurar drag and drop
-  makeDraggable(popup);
 }
+
+// Funciones globales para navegación
+window.prevFeature = function () {
+  if (currentFeatureIndex > 0) {
+    currentFeatureIndex--;
+    actualizarContenidoPopup(document.getElementById('popup-central'));
+  }
+};
+
+window.nextFeature = function () {
+  if (currentFeatureIndex < currentFeatures.length - 1) {
+    currentFeatureIndex++;
+    actualizarContenidoPopup(document.getElementById('popup-central'));
+  }
+};
 
 // Función para hacer el popup arrastrable
 function makeDraggable(element) {
@@ -521,12 +563,12 @@ export function activarConsultaPunto() {
     const view = base_map.getView();
     const resolution = view.getResolution();      // grados por píxel (EPSG:4326)
 
-    const pixelTolerance = 5;                   
+    const pixelTolerance = 5;
     let radius = resolution * pixelTolerance;     // grados ≈ pixelTolerance píxeles
 
     // Por seguridad, si algo raro pasa con la resolución, usamos un fallback
     if (!radius || radius <= 0) {
-      radius = 0.02; 
+      radius = 0.02;
     }
 
     try {
@@ -584,7 +626,8 @@ export function activarConsultaRectangulo() {
           minx,
           miny,
           maxx,
-          maxy
+          maxy,
+          limit: 50
         })
       });
 
@@ -632,7 +675,7 @@ export function activarAgregarElemento(vectorSource, layer) {
         await enviarTransaccionWFS(feature, layer);
         alert("✅ Punto guardado correctamente en la Base de Datos");
         vectorSource.refresh();
-        
+
       } catch (error) {
         console.error("Error al guardar:", error);
         alert("❌ Error: " + error.message);
@@ -749,15 +792,15 @@ export function inicializarHerramientas() {
       console.error("No se encontró la capa a editar");
       return;
     }
-    const check = document.getElementById('gs_'+gsCapa);
+    const check = document.getElementById('gs_' + gsCapa);
 
     if (!appCapa.getVisible()) {
-        appCapa.setVisible(true);
-        
-        if (check) {
-          check.checked = true;
-          check.dispatchEvent(new Event('change'));
-        }
+      appCapa.setVisible(true);
+
+      if (check) {
+        check.checked = true;
+        check.dispatchEvent(new Event('change'));
+      }
     }
     activarAgregarElemento(appCapa.getSource(), gsCapa);
   });
