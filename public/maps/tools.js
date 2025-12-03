@@ -414,6 +414,9 @@ function actualizarContenidoPopup(popup) {
       </button>
     </div>
   `;
+
+  // Re-aplicar drag and drop porque el header se recreó
+  makeDraggable(popup);
 }
 
 // Funciones globales para navegación
