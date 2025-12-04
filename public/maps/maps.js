@@ -14,12 +14,11 @@ export const INITIAL_CENTER = base_map.getView().getCenter();
 export const INITIAL_ZOOM = base_map.getView().getZoom();
 export { base_map };
 
-// ========================================
-// BRÚJULA (NORTH ARROW) PARA EL MAPA
-// ========================================
+// Brujula
+
 (function addCompassControl(map) {
 
-  // Crear contenedor
+  // Contenedor
   const compassDiv = document.createElement('div');
   compassDiv.className = 'ol-compass ol-unselectable ol-control';
 
@@ -47,7 +46,7 @@ export { base_map };
   const view = map.getView();
   view.on('change:rotation', () => {
     const rotation = view.getRotation() || 0;
-    compassDiv.style.transform = `rotate(${-rotation}rad)`;
+    compassDiv.style.transform = `rotate(${rotation}rad)`;
   });
 
 })(base_map);
