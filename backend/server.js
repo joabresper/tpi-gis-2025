@@ -1,6 +1,7 @@
 const express = require('express');
 const path = require('path');
 const { testConnection, runQuery } = require('./db');
+require('dotenv').config();
 
 const app = express();
 const PORT = process.env.PORT || 3000;
@@ -24,6 +25,20 @@ function getSafeTableName(layerTable) {
   }
   return layerTable;
 }
+
+// ==========================
+//  API: Carga de configuracion de GS
+// ==========================
+app.get('/env-config', (req, res) => {
+  const config = {
+    workspace: process.env.GS_WORKSPACE,
+    uri: process.env.GS_URI
+  };
+  
+  // Respondemos con código JavaScript válido
+  res.set('Content-Type', 'application/javascript');
+  res.send(`window.GS_CONFIG = ${JSON.stringify(config)};`);
+});
 
 // ==========================
 //  API: consulta por PUNTO
