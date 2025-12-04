@@ -584,6 +584,10 @@ function obtenerCapaYTablaActiva() {
 
 // Función para mostrar alerta de no hay capa activa
 function mostrarAlertaNoCapaActiva() {
+  document
+        .querySelectorAll('.ol-custom-tool-btn.active-tool')
+        .forEach(b => b.classList.remove('active-tool'));
+        
   const alert = document.getElementById('alert-no-layer');
   if (alert) {
     alert.classList.add('show');
