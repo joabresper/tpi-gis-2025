@@ -1,6 +1,7 @@
 const express = require('express');
 const path = require('path');
 const { testConnection, runQuery } = require('./db');
+require('dotenv').config();
 
 const app = express();
 const PORT = process.env.PORT || 3000;
@@ -24,6 +25,20 @@ function getSafeTableName(layerTable) {
   }
   return layerTable;
 }
+
+// ==========================
+//  API: Carga de configuracion de GS
+// ==========================
+app.get('/env-config', (req, res) => {
+  const config = {
+    workspace: process.env.GS_WORKSPACE,
+    uri: process.env.GS_URI
+  };
+  
+  // Respondemos con código JavaScript válido
+  res.set('Content-Type', 'application/javascript');
+  res.send(`window.GS_CONFIG = ${JSON.stringify(config)};`);
+});
 
 // ==========================
 //  API: consulta por PUNTO
@@ -81,7 +96,7 @@ app.post('/api/query/point', async (req, res) => {
 // ==============================
 app.post('/api/query/rect', async (req, res) => {
   try {
-    const { layerTable, minx, miny, maxx, maxy } = req.body;
+    const { layerTable, minx, miny, maxx, maxy, limit } = req.body;
 
     if (
       layerTable == null ||
@@ -92,6 +107,7 @@ app.post('/api/query/rect', async (req, res) => {
     }
 
     const table = getSafeTableName(layerTable);
+    const queryLimit = limit && limit > 0 ? parseInt(limit) : 50;
 
     const sql = `
       SELECT
@@ -102,10 +118,10 @@ app.post('/api/query/rect', async (req, res) => {
         t.geom,
         ST_MakeEnvelope($1, $2, $3, $4, 4326)
       )
-      LIMIT 200;
+      LIMIT $5;
     `;
 
-    const result = await runQuery(sql, [minx, miny, maxx, maxy]);
+    const result = await runQuery(sql, [minx, miny, maxx, maxy, queryLimit]);
 
     const features = result.rows.map(row => ({
       type: 'Feature',
