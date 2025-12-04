@@ -306,25 +306,50 @@ function limpiarConsulta() {
   currentFeatureIndex = 0;
 }
 
-function obtenerCapasWMSVisibles() {
+function obtenerCapasVisibles() {
   const visibles = [];
 
   base_map.getLayers().forEach(layer => {
-    if (!(layer instanceof ol.layer.Tile)) return;
     if (!layer.getVisible || !layer.getVisible()) return;
 
     const source = layer.getSource && layer.getSource();
-    if (!(source instanceof ol.source.TileWMS)) return;
+    let layerName = null; // Aquí guardaremos el nombre 'tpigis:nombre_capa'
 
-    const params = source.getParams ? source.getParams() : null;
-    if (!params || !params.LAYERS) return;
+    if (layer instanceof ol.layer.Tile && source instanceof ol.source.TileWMS) {
+      const params = source.getParams ? source.getParams() : null;
+      if (params && params.LAYERS) {
+        layerName = params.LAYERS;
+      }
+    }
 
-    // Solo capas de TU workspace (tpigis)
-    if (!params.LAYERS.startsWith(`${gs.workspace}:`)) return;
+    // --- CASO B: Capas Vectoriales (Nueva lógica) ---
+    else if (layer instanceof ol.layer.Vector) {
+      // 1. Obtenemos el título de la capa que estamos iterando en el mapa
+      const layerTitle = layer.get('title');
 
-    visibles.push(layer);
+      if (layerTitle) {
+        // 2. Buscamos en tu objeto global 'capas'.
+        // Object.entries devuelve un array de arrays: [['gs_capa_usuario', objetoCapa], ...]
+        const layerEncontrada = Object.entries(capas).find(([key, layerObj]) => {
+          // Comparamos el título de la capa del mapa con el título de la capa en tu objeto global
+          return layerObj.get('title') === layerTitle;
+        });
+
+        // 3. Si hubo coincidencia, nos quedamos con la 'key' (la posición 0 del array)
+        if (layerEncontrada) {
+          layerName = `${gs.workspace}:${layerEncontrada[0].replace(/^gs_/, '')}`;
+        }
+      }
+    }
+
+    // 2. Verificación final y filtro por Workspace
+    if (layerName && layerName.startsWith(`${gs.workspace}:`)) {
+      // Opcional: Si necesitas que el objeto layer tenga el nombre accesible
+      // uniformemente para tu SQL posterior, podrías guardarlo:
+      // layer.sqlName = layerName;
+      visibles.push(layer);
+    }
   });
-
   return visibles;
 }
 
@@ -361,7 +386,7 @@ function actualizarContenidoPopup(popup) {
   const HIDDEN_FIELDS = ['gid', 'geom', 'prov', 'prov_1', 'id', 'gid_1', 'igds_color', 'igds_level', 'igds_weigh', 'coord', 'group', 't_act', 'igds_type', 'signo'];
 
   // Campos principales a mostrar inicialmente
-  const PRIMARY_FIELDS = ['ac', 'sp', 'tipo', 'cargo', 'datum', 'provincia'];
+  const PRIMARY_FIELDS = ['ac', 'sp', 'tipo', 'cargo', 'datum', 'provincia', 'nombre'];
 
   // Filtrar todos los campos visibles
   const allFields = Object.entries(props)
@@ -516,16 +541,43 @@ window.togglePopupDetails = function () {
 
 
 function obtenerCapaYTablaActiva() {
-  const capasVisibles = obtenerCapasWMSVisibles();
+  const capasVisibles = obtenerCapasVisibles();
   if (capasVisibles.length === 0) return null;
 
   const layer = capasVisibles[0];
-  const source = layer.getSource();
-  const params = source.getParams();
 
-  const fullName = params.LAYERS || '';
-  const parts = fullName.split(':');
-  const layerTable = parts.length === 2 ? parts[1] : fullName;
+  const source = layer.getSource && layer.getSource();
+  let layerName = null; // Aquí guardaremos el nombre 'tpigis:nombre_capa'
+
+  if (layer instanceof ol.layer.Tile && source instanceof ol.source.TileWMS) {
+    const params = source.getParams ? source.getParams() : null;
+    if (params && params.LAYERS) {
+      layerName = params.LAYERS;
+    }
+  }
+
+  // --- CASO B: Capas Vectoriales (Nueva lógica) ---
+  else if (layer instanceof ol.layer.Vector) {
+    // 1. Obtenemos el título de la capa que estamos iterando en el mapa
+    const layerTitle = layer.get('title');
+
+    if (layerTitle) {
+      // 2. Buscamos en tu objeto global 'capas'.
+      // Object.entries devuelve un array de arrays: [['gs_capa_usuario', objetoCapa], ...]
+      const layerEncontrada = Object.entries(capas).find(([key, layerObj]) => {
+        // Comparamos el título de la capa del mapa con el título de la capa en tu objeto global
+        return layerObj.get('title') === layerTitle;
+      });
+
+      // 3. Si hubo coincidencia, nos quedamos con la 'key' (la posición 0 del array)
+      if (layerEncontrada) {
+        layerName = `${gs.workspace}:${layerEncontrada[0].replace(/^gs_/, '')}`;
+      }
+    }
+  }
+
+  const parts = layerName.split(':');
+  const layerTable = parts.length === 2 ? parts[1] : layerName;
 
   return { layer, layerTable };
 }
@@ -543,7 +595,7 @@ function mostrarAlertaNoCapaActiva() {
 }
 export function activarConsultaPunto() {
   // Verificar si hay capas activas ANTES de limpiar
-  const capasVisibles = obtenerCapasWMSVisibles();
+  const capasVisibles = obtenerCapasVisibles();
   if (capasVisibles.length === 0) {
     mostrarAlertaNoCapaActiva();
     return; // Salir sin activar la herramienta
@@ -597,7 +649,7 @@ export function activarConsultaPunto() {
 
 export function activarConsultaRectangulo() {
   // Verificar si hay capas activas ANTES de limpiar
-  const capasVisibles = obtenerCapasWMSVisibles();
+  const capasVisibles = obtenerCapasVisibles();
   if (capasVisibles.length === 0) {
     mostrarAlertaNoCapaActiva();
     return; // Salir sin activar la herramienta
